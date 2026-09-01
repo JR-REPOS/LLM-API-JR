@@ -37,8 +37,8 @@ jobs:
 
       - name: Verify build output
         run: |
-          if [ ! -d "./dist" ]; then
-            echo "Error: dist directory was not created after build"
+          if [ ! -d "./.vercel/output/static" ]; then
+            echo "Error: .vercel/output/static directory was not created after build"
             ls -la
             exit 1
           fi
@@ -46,7 +46,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './dist'
+          path: './.vercel/output/static'
 
   deploy:
     needs: build
