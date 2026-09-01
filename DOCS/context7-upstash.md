@@ -1,0 +1,8982 @@
+# Context7 API — upstash/context7
+
+Live documentation pulled from [context7.com/upstash/context7](https://context7.com/upstash/context7/llms.txt?tokens=88310).
+
+Use this file as the source of truth for Context7 REST/SDK, MCP, CLI, and agent tools.
+
+---
+
+### Install Context7
+
+Source: https://github.com/upstash/context7/blob/master/README.md
+
+Command to initiate the Context7 setup process for coding agents.
+
+```bash
+npx ctx7 setup
+```
+
+--------------------------------
+
+### Install Context7 AI SDK tools
+
+Source: https://github.com/upstash/context7/blob/master/docs/agentic-tools/ai-sdk/getting-started.mdx
+
+Install the `@upstash/context7-tools-ai-sdk` package using npm, pnpm, yarn, or bun to integrate documentation tools into your project.
+
+```bash
+npm install @upstash/context7-tools-ai-sdk
+```
+
+```bash
+pnpm add @upstash/context7-tools-ai-sdk
+```
+
+```bash
+yarn add @upstash/context7-tools-ai-sdk
+```
+
+```bash
+bun add @upstash/context7-tools-ai-sdk
+```
+
+--------------------------------
+
+### Utilize the Context7Agent for streamlined documentation lookup
+
+Source: https://github.com/upstash/context7/blob/master/docs/agentic-tools/ai-sdk/getting-started.mdx
+
+Shows how to use the pre-configured `Context7Agent` for an automated documentation lookup workflow. The agent handles tool orchestration internally, simplifying integration.
+
+```typescript
+import { Context7Agent } from "@upstash/context7-tools-ai-sdk";
+import { anthropic } from "@ai-sdk/anthropic";
+
+const agent = new Context7Agent({
+  model: anthropic("claude-sonnet-4-20250514"),
+});
+
+const { text } = await agent.generate({
+  prompt: "How do I use React Server Components?",
+});
+
+console.log(text);
+```
+
+--------------------------------
+
+### Quick Start: Setup and Remove Context7 for AI Agents
+
+Source: https://github.com/upstash/context7/blob/master/packages/cli/README.md
+
+Perform basic setup and removal of Context7 MCP for your coding agents. Commands allow targeting specific agents like Cursor, Claude, or OpenCode.
+
+```bash
+ctx7 setup
+```
+
+```bash
+ctx7 remove
+```
+
+```bash
+ctx7 setup --cursor
+```
+
+```bash
+ctx7 setup --claude
+```
+
+```bash
+ctx7 setup --opencode
+```
+
+--------------------------------
+
+### CLI Execution Examples
+
+Source: https://github.com/upstash/context7/blob/master/packages/mcp/README.md
+
+Examples of running the server with different transport protocols and authentication flags.
+
+```bash
+bun run dist/index.js --transport http --port 8080
+```
+
+```bash
+bun run dist/index.js --transport stdio --api-key YOUR_API_KEY
+```
+
+--------------------------------
+
+### Quick Start: Search Libraries and Get Documentation Context
+
+Source: https://github.com/upstash/context7/blob/master/docs/sdks/ts/getting-started.mdx
+
+Demonstrates how to search for libraries and retrieve documentation context in both JSON array and plain text formats.
+
+```typescript
+import { Context7 } from "@upstash/context7-sdk";
+
+const client = new Context7();
+
+// Search for libraries
+const libraries = await client.searchLibrary(
+  "I need to build a UI with components",
+  "react"
+);
+console.log(`Found ${libraries.length} libraries`);
+console.log(libraries[0].id); // "/facebook/react"
+
+// Get documentation as JSON array (default)
+const docs = await client.getContext(
+  "How do I use hooks?",
+  "/facebook/react"
+);
+console.log(docs[0].title, docs[0].content);
+
+// Get documentation context as plain text
+const context = await client.getContext("How do I use hooks?", "/facebook/react", {
+  type: "txt"
+});
+console.log(context);
+```
+
+--------------------------------
+
+### General documentation query examples
+
+Source: https://github.com/upstash/context7/blob/master/plugins/copilot/context7/commands/docs.md
+
+Examples of querying documentation for libraries like React, Next.js, and Prisma using names or IDs.
+
+```shell
+/context7:docs react hooks
+/context7:docs next.js authentication
+/context7:docs prisma relations
+/context7:docs /vercel/next.js/v15.1.8 app router
+/context7:docs /supabase/supabase row level security
+```
+
+--------------------------------
+
+### Integrate Context7 tools with Vercel AI SDK generateText
+
+Source: https://github.com/upstash/context7/blob/master/docs/agentic-tools/ai-sdk/getting-started.mdx
+
+Demonstrates how to use `resolveLibraryId` and `queryDocs` tools with `generateText` from the Vercel AI SDK. This allows the AI model to fetch relevant documentation before generating a response.
+
+```typescript
+import { resolveLibraryId, queryDocs } from "@upstash/context7-tools-ai-sdk";
+import { generateText, stepCountIs } from "ai";
+import { openai } from "@ai-sdk/openai";
+
+const { text } = await generateText({
+  model: openai("gpt-5.2"),
+  prompt: "How do I create a server action in Next.js?",
+  tools: {
+    resolveLibraryId: resolveLibraryId(),
+    queryDocs: queryDocs(),
+  },
+  stopWhen: stepCountIs(5),
+});
+
+console.log(text);
+```
+
+--------------------------------
+
+### Configure Context7 for OpenCode via setup CLI
+
+Source: https://github.com/upstash/context7/blob/master/docs/clients/opencode.mdx
+
+Runs the interactive setup to authenticate via OAuth, generate an API key, and configure MCP or CLI mode.
+
+```bash
+npx ctx7 setup --opencode
+```
+
+--------------------------------
+
+### Manual Documentation Lookup Command Examples
+
+Source: https://github.com/upstash/context7/blob/master/docs/clients/pi.mdx
+
+Examples of using the `/c7-docs` command for specific documentation lookups.
+
+```cli
+/c7-docs next.js Cache Components
+/c7-docs supabase row level security
+```
+
+--------------------------------
+
+### Example Usage of query-docs Tool
+
+Source: https://github.com/upstash/context7/blob/master/plugins/codex/context7/README.md
+
+This example demonstrates the input and expected output when using the `query-docs` tool to fetch documentation for a specific library and query.
+
+```text
+Input: { libraryId: "/vercel/next.js", query: "app router middleware" }
+Output: Relevant documentation snippets with code examples
+```
+
+--------------------------------
+
+### Install Context7 CLI
+
+Source: https://github.com/upstash/context7/blob/master/packages/cli/README.md
+
+Run the Context7 CLI directly without installation using npx, or install it globally for persistent access.
+
+```bash
+npx ctx7
+```
+
+```bash
+npm install -g ctx7
+```
+
+--------------------------------
+
+### Configure Context7 API Key explicitly in tools
+
+Source: https://github.com/upstash/context7/blob/master/docs/agentic-tools/ai-sdk/getting-started.mdx
+
+Demonstrates how to pass the Context7 API key directly to `resolveLibraryId` and `queryDocs` tool constructors. This method is useful when not relying on environment variables.
+
+```typescript
+import { resolveLibraryId, queryDocs } from "@upstash/context7-tools-ai-sdk";
+
+const tools = {
+  resolveLibraryId: resolveLibraryId({ apiKey: "your-api-key" }),
+  queryDocs: queryDocs({ apiKey: "your-api-key" }),
+};
+```
+
+--------------------------------
+
+### Search Library - Basic Search Example
+
+Source: https://github.com/upstash/context7/blob/master/docs/sdks/ts/commands/search-library.mdx
+
+Basic example demonstrating how to search for libraries using the Context7 SDK. Shows how to execute a search query and iterate through the results.
+
+```APIDOC
+## Basic Search Example
+
+### Description
+Demonstrates basic library search functionality using the Context7 SDK.
+
+### Code Example
+```typescript
+import { Context7 } from "@upstash/context7-sdk";
+
+const client = new Context7();
+
+const libraries = await client.searchLibrary(
+  "I need to build a UI",
+  "react"
+);
+
+console.log(`Found ${libraries.length} libraries`);
+libraries.forEach((library) => {
+  console.log(`${library.name}: ${library.description}`);
+});
+```
+
+### Usage
+This example shows how to:
+1. Initialize the Context7 client
+2. Call searchLibrary with a query and library name
+3. Process the returned array of libraries
+4. Display library information
+```
+
+--------------------------------
+
+### Examples of Specific vs. Less Specific Queries
+
+Source: https://github.com/upstash/context7/blob/master/docs/clients/pi.mdx
+
+Illustrates the difference between specific and less specific queries for getting better results from the Context7 Pi agent.
+
+```plaintext
+# Good
+How do I handle file uploads with the Supabase Storage API?
+
+# Less specific
+How does Supabase storage work?
+```
+
+--------------------------------
+
+### Development Commands
+
+Source: https://github.com/upstash/context7/blob/master/packages/mcp/README.md
+
+Standard commands for installing dependencies, building the project, and running the server.
+
+```bash
+bun i
+```
+
+```bash
+bun run build
+```
+
+```bash
+bun run dist/index.js
+```
+
+--------------------------------
+
+### Install Plugin via CLI
+
+Source: https://github.com/upstash/context7/blob/master/plugins/agent-plugins/context7/README.md
+
+Command to install the plugin directory using a compatible agent client.
+
+```bash
+<your-agent> plugin install ./plugins/agent-plugins/context7
+```
+
+--------------------------------
+
+### Start Service
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/deployment/docker.mdx
+
+Launch the Context7 container in detached mode.
+
+```bash
+docker compose up -d
+```
+
+--------------------------------
+
+### Install Context7 Plugin for GitHub Copilot CLI
+
+Source: https://github.com/upstash/context7/blob/master/docs/clients/copilot-cli.mdx
+
+Add the Context7 marketplace and install the plugin to integrate Context7 documentation lookups with GitHub Copilot CLI.
+
+```bash
+copilot plugin marketplace add upstash/context7
+copilot plugin install context7@context7-marketplace
+```
+
+--------------------------------
+
+### Install Context7 for Cursor
+
+Source: https://github.com/upstash/context7/blob/master/docs/clients/cursor.mdx
+
+Run the setup command to automatically configure Context7 for the Cursor editor. This command handles OAuth authentication, API key generation, and skill installation for MCP mode.
+
+```bash
+npx ctx7 setup --cursor
+```
+
+--------------------------------
+
+### Integrate Context7 tools with Vercel AI SDK streamText
+
+Source: https://github.com/upstash/context7/blob/master/docs/agentic-tools/ai-sdk/getting-started.mdx
+
+Illustrates how to use `resolveLibraryId` and `queryDocs` tools with `streamText` for streaming AI responses. The tools enable on-demand documentation fetching during the streaming process.
+
+```typescript
+import { resolveLibraryId, queryDocs } from "@upstash/context7-tools-ai-sdk";
+import { streamText, stepCountIs } from "ai";
+import { openai } from "@ai-sdk/openai";
+
+const { textStream } = streamText({
+  model: openai("gpt-5.2"),
+  prompt: "Explain how to use Tanstack Query for data fetching",
+  tools: {
+    resolveLibraryId: resolveLibraryId(),
+    queryDocs: queryDocs(),
+  },
+  stopWhen: stepCountIs(5),
+});
+
+for await (const chunk of textStream) {
+  process.stdout.write(chunk);
+}
+```
+
+--------------------------------
+
+### Install Context7 OpenCode plugin
+
+Source: https://github.com/upstash/context7/blob/master/docs/clients/opencode.mdx
+
+Installs the Context7 OpenCode plugin which bundles the MCP server and skill.
+
+```bash
+opencode plugin @upstash/context7-opencode
+```
+
+--------------------------------
+
+### Install Context7 TypeScript SDK
+
+Source: https://github.com/upstash/context7/blob/master/docs/sdks/ts/getting-started.mdx
+
+Install the `@upstash/context7-sdk` package using your preferred package manager.
+
+```shell
+npm install @upstash/context7-sdk
+```
+
+```shell
+pnpm add @upstash/context7-sdk
+```
+
+```shell
+yarn add @upstash/context7-sdk
+```
+
+```shell
+bun add @upstash/context7-sdk
+```
+
+--------------------------------
+
+### Example Usage of resolve-library-id Tool
+
+Source: https://github.com/upstash/context7/blob/master/plugins/codex/context7/README.md
+
+This example shows the input and expected output when using the `resolve-library-id` tool to search for a library.
+
+```text
+Input: "next.js"
+Output: { id: "/vercel/next.js", name: "Next.js", versions: ["v15.1.8", "v14.2.0", ...] }
+```
+
+--------------------------------
+
+### Configure Context7 with ctx7 setup
+
+Source: https://github.com/upstash/context7/blob/master/docs/clients/cli.mdx
+
+Runs Context7 setup interactively or via flags to configure MCP server or CLI + Skills mode for specific agents and scopes.
+
+```bash
+# Interactive — prompts for mode, then agent/install target
+ctx7 setup
+
+# Skip the mode prompt
+ctx7 setup --mcp            # MCP server mode
+ctx7 setup --cli            # CLI + Skills mode
+
+# Target a specific agent (MCP mode)
+ctx7 setup --claude
+ctx7 setup --cursor
+ctx7 setup --opencode
+
+# Target a specific install location (CLI + Skills mode)
+ctx7 setup --cli --claude       # Claude Code (~/.claude/skills)
+ctx7 setup --cli --cursor       # Cursor (~/.cursor/skills)
+ctx7 setup --cli --universal    # Universal (~/.agents/skills)
+ctx7 setup --cli --antigravity  # Antigravity (~/.agent/skills)
+
+# Configure for current project only (default is global)
+ctx7 setup --project
+
+# Skip confirmation prompts
+ctx7 setup --yes
+```
+
+--------------------------------
+
+### Install Context7 CLI globally
+
+Source: https://github.com/upstash/context7/blob/master/skills/find-docs/SKILL.md
+
+Install the ctx7 package globally to use the bare ctx7 command instead of prefixing with npx.
+
+```bash
+npm install -g ctx7@latest
+```
+
+--------------------------------
+
+### Start eve development server
+
+Source: https://github.com/upstash/context7/blob/master/docs/integrations/eve.mdx
+
+Launches the eve agent locally to test prompts and tool connections.
+
+```bash
+pnpm dev
+```
+
+--------------------------------
+
+### Clone and Install Context7 MCP Dependencies
+
+Source: https://github.com/upstash/context7/blob/master/docs/resources/developer.mdx
+
+Clones the Context7 repository and installs its dependencies using pnpm.
+
+```bash
+git clone https://github.com/upstash/context7.git
+cd context7
+pnpm i
+```
+
+--------------------------------
+
+### Install Context7 MCP using Smithery CLI
+
+Source: https://github.com/upstash/context7/blob/master/docs/resources/all-clients.mdx
+
+Installs the Context7 MCP server for a designated client automatically via the Smithery CLI tool.
+
+```bash
+npx -y @smithery/cli@latest install @upstash/context7-mcp --client <CLIENT_NAME>
+```
+
+--------------------------------
+
+### Fetch documentation with ctx7 docs
+
+Source: https://github.com/upstash/context7/blob/master/docs/clients/cli.mdx
+
+Takes a full library ID starting with '/' and a natural-language question to return relevant documentation.
+
+```bash
+ctx7 docs /facebook/react "How to clean up useEffect with async operations"
+ctx7 docs /vercel/next.js "How to add middleware that redirects unauthenticated users"
+ctx7 docs /prisma/prisma "How to define one-to-many relations with cascade delete"
+```
+
+--------------------------------
+
+### Query library documentation using Context7 CLI
+
+Source: https://github.com/upstash/context7/blob/master/skills/context7-cli/references/docs.md
+
+Retrieve targeted documentation and code examples by providing a library ID and a specific query topic.
+
+```bash
+ctx7 docs /facebook/react "How to clean up useEffect with async operations"
+ctx7 docs /vercel/next.js "How to add authentication middleware to app router"
+ctx7 docs /prisma/prisma "How to define one-to-many relations with cascade delete"
+```
+
+--------------------------------
+
+### Query eve agent for documentation
+
+Source: https://github.com/upstash/context7/blob/master/docs/integrations/eve.mdx
+
+Example user prompt to prompt the agent to use Context7 tools.
+
+```text
+Use Context7 to show me how to configure caching in Next.js.
+```
+
+--------------------------------
+
+### Install AI Coding Skills using ctx7 CLI
+
+Source: https://github.com/upstash/context7/blob/master/skills/context7-cli/references/skills.md
+
+The `ctx7 skills install` command allows users to install AI coding skills from GitHub repositories. Users can install specific skills, all skills from a repository, or target particular IDEs like Claude Code or Cursor, or perform a universal installation. Installations can be project-specific or global.
+
+```bash
+ctx7 skills install /anthropics/skills           # Interactive — pick from a list
+ctx7 skills install /anthropics/skills pdf        # Install a specific skill by name
+ctx7 skills install /anthropics/skills --all      # Install everything without prompting
+```
+
+```bash
+ctx7 skills install /anthropics/skills pdf --claude     # Claude Code only
+ctx7 skills install /anthropics/skills pdf --cursor     # Cursor only
+ctx7 skills install /anthropics/skills pdf --universal  # Universal (.agents/skills/)
+ctx7 skills install /anthropics/skills --all --global   # All skills, global install
+```
+
+--------------------------------
+
+### Prompting with Context7
+
+Source: https://github.com/upstash/context7/blob/master/README.md
+
+Examples of prompts using the context7 keyword to fetch specific documentation or code.
+
+```txt
+Create a Next.js middleware that checks for a valid JWT in cookies
+and redirects unauthenticated users to `/login`. use context7
+```
+
+```txt
+Configure a Cloudflare Worker script to cache
+JSON API responses for five minutes. use context7
+```
+
+```txt
+Show me the Supabase auth API for email/password sign-up.
+```
+
+--------------------------------
+
+### Install Context7 Pi Extension
+
+Source: https://github.com/upstash/context7/blob/master/docs/clients/pi.mdx
+
+Installs the Context7 extension for the Pi coding agent using Pi's package command.
+
+```bash
+pi install npm:@upstash/context7-pi
+```
+
+--------------------------------
+
+### Test Context7 MCP Setup with Inspector
+
+Source: https://github.com/upstash/context7/blob/master/docs/resources/developer.mdx
+
+Launches the MCP Inspector to verify the functionality of Context7 tools.
+
+```bash
+npx -y @modelcontextprotocol/inspector npx @upstash/context7-mcp
+```
+
+--------------------------------
+
+### Configure Context7 API Key environment variable
+
+Source: https://github.com/upstash/context7/blob/master/docs/agentic-tools/ai-sdk/getting-started.mdx
+
+Set your Context7 API key as an environment variable. The tools and agents will automatically use this key for authentication.
+
+```bash
+CONTEXT7_API_KEY=ctx7sk-...
+```
+
+--------------------------------
+
+### Example Hosted context7.json File URL
+
+Source: https://github.com/upstash/context7/blob/master/docs/howto/claiming-libraries.mdx
+
+For website or llms.txt sources, the context7.json file must be publicly reachable at a URL like this example, under your library's base URL.
+
+```url
+https://docs.example.com/mylib/context7.json
+```
+
+--------------------------------
+
+### Install Context7 Plugin in Claude Code
+
+Source: https://github.com/upstash/context7/blob/master/docs/clients/claude-code.mdx
+
+Run these commands in Claude Code to add the Context7 marketplace and install the plugin, which includes its skills, agents, and commands.
+
+```bash
+/plugin marketplace add upstash/context7
+/plugin install context7@context7-marketplace
+```
+
+--------------------------------
+
+### Install ctx7 globally with npm
+
+Source: https://github.com/upstash/context7/blob/master/docs/clients/cli.mdx
+
+Requires Node.js 18 or later for global installation.
+
+```bash
+npm install -g ctx7
+
+# Verify installation
+ctx7 --version
+```
+
+--------------------------------
+
+### Query documentation using context7_query-docs
+
+Source: https://github.com/upstash/context7/blob/master/packages/opencode/README.md
+
+Fetches and ranks relevant documentation snippets and code examples for a given library ID and query.
+
+```text
+Input: { libraryId: "/vercel/next.js", query: "app router middleware" }
+Output: Relevant documentation snippets with code examples
+```
+
+--------------------------------
+
+### Install Context7 CLI globally with npm
+
+Source: https://github.com/upstash/context7/blob/master/skills/context7-cli/SKILL.md
+
+Installs the latest version of the Context7 CLI as a global package using npm, making it available system-wide.
+
+```bash
+npm install -g ctx7@latest
+```
+
+--------------------------------
+
+### Query documentation using ctx7 CLI
+
+Source: https://github.com/upstash/context7/blob/master/skills/find-docs/SKILL.md
+
+Run the `ctx7 docs` command with a repository path and a specific query to retrieve relevant documentation and code examples.
+
+```bash
+npx ctx7@latest docs /facebook/react "How to clean up useEffect with async operations"
+npx ctx7@latest docs /vercel/next.js "How to add authentication middleware to app router"
+npx ctx7@latest docs /prisma/prisma "How to define one-to-many relations with cascade delete"
+```
+
+--------------------------------
+
+### Install Context7 for Claude Code
+
+Source: https://github.com/upstash/context7/blob/master/docs/clients/claude-code.mdx
+
+Run this command to configure Context7 for Claude Code, which includes OAuth authentication, API key generation, and skill installation.
+
+```bash
+npx ctx7 setup --claude
+```
+
+--------------------------------
+
+### Install Context7 plugin in OpenAI Codex
+
+Source: https://github.com/upstash/context7/blob/master/docs/resources/all-clients.mdx
+
+Installs the Context7 marketplace plugin for Codex to connect to the hosted MCP server.
+
+```sh
+codex plugin marketplace add upstash/context7
+codex plugin add context7@context7-marketplace
+```
+
+--------------------------------
+
+### Configure Context7 Setup for AI Agents
+
+Source: https://github.com/upstash/context7/blob/master/packages/cli/README.md
+
+Configure Context7 MCP and rules for AI coding agents. Options include interactive setup, targeting specific agents, using an existing API key, OAuth, project-specific configuration, or skipping prompts.
+
+```bash
+ctx7 setup
+```
+
+```bash
+ctx7 setup --cursor
+```
+
+```bash
+ctx7 setup --claude
+```
+
+```bash
+ctx7 setup --opencode
+```
+
+```bash
+ctx7 setup --api-key YOUR_API_KEY
+```
+
+```bash
+ctx7 setup --oauth
+```
+
+```bash
+ctx7 setup --project
+```
+
+```bash
+ctx7 setup --yes
+```
+
+--------------------------------
+
+### Query Context7 explicitly in OpenCode prompts
+
+Source: https://github.com/upstash/context7/blob/master/docs/clients/opencode.mdx
+
+Examples showing how to explicitly invoke Context7 for library documentation.
+
+```text
+use context7 to show me how to set up middleware in Next.js 15
+use context7 for Prisma query examples with relations
+use context7 for the Supabase syntax for row-level security
+```
+
+--------------------------------
+
+### Search Library - Checking Available Versions
+
+Source: https://github.com/upstash/context7/blob/master/docs/sdks/ts/commands/search-library.mdx
+
+Example showing how to search for libraries and check what versions are available for a specific library.
+
+```APIDOC
+## Checking Available Versions
+
+### Description
+Demonstrates how to search for libraries and inspect available versions.
+
+### Code Example
+```typescript
+const libraries = await client.searchLibrary("I want to use lodash", "lodash");
+
+const library = libraries[0];
+if (library.versions) {
+  console.log(`Available versions: ${library.versions.join(", ")}`);
+}
+```
+
+### Usage
+This example shows:
+1. Searching for a specific library
+2. Accessing the first result
+3. Checking if versions are available
+4. Displaying all available versions in a readable format
+```
+
+--------------------------------
+
+### Remove Context7 Setup for AI Agents
+
+Source: https://github.com/upstash/context7/blob/master/packages/cli/README.md
+
+Remove the Context7 setup configured by `ctx7 setup`. Options allow interactive removal, targeting specific agents, removing project-level configurations, or specifying which setup mode (CLI or MCP) to remove.
+
+```bash
+ctx7 remove
+```
+
+```bash
+ctx7 remove --cursor
+```
+
+```bash
+ctx7 remove --claude --project
+```
+
+```bash
+ctx7 remove --cursor --all
+```
+
+```bash
+ctx7 remove --cursor --cli
+```
+
+```bash
+ctx7 remove --claude --mcp
+```
+
+--------------------------------
+
+### Search Library - Full Workflow
+
+Source: https://github.com/upstash/context7/blob/master/docs/sdks/ts/commands/search-library.mdx
+
+Complete workflow example showing how to search for a library and then retrieve detailed context information for that library.
+
+```APIDOC
+## Full Workflow Example
+
+### Description
+Demonstrates a complete workflow combining library search with context retrieval.
+
+### Code Example
+```typescript
+import { Context7 } from "@upstash/context7-sdk";
+
+const client = new Context7();
+
+const libraries = await client.searchLibrary(
+  "I want to build a React app",
+  "react"
+);
+
+const library = libraries[0];
+console.log(`Using: ${library.name} (${library.id})`);
+
+const context = await client.getContext(
+  "How do I create a component?",
+  library.id
+);
+
+console.log(context);
+```
+
+### Usage
+This example demonstrates:
+1. Searching for libraries matching a use case
+2. Selecting the top result
+3. Using the library ID to retrieve detailed context
+4. Accessing specific documentation for the selected library
+```
+
+--------------------------------
+
+### Automatic Skill Trigger Examples in Pi
+
+Source: https://github.com/upstash/context7/blob/master/docs/clients/pi.mdx
+
+Examples of natural language queries that automatically trigger Context7's documentation tools in the Pi agent.
+
+```plaintext
+how do I configure caching in Next.js 16?
+use the Prisma syntax for relations
+what are the Supabase auth methods?
+```
+
+--------------------------------
+
+### Quick Reference for Context7 CLI commands
+
+Source: https://github.com/upstash/context7/blob/master/skills/context7-cli/SKILL.md
+
+A comprehensive list of common Context7 CLI commands for managing documentation, AI coding skills, and initial setup.
+
+```bash
+# Documentation
+ctx7 library <name> <query>           # Step 1: resolve library ID
+ctx7 docs <libraryId> <query>         # Step 2: fetch docs
+
+# Skills
+ctx7 skills install /owner/repo       # Install from a repo (interactive)
+ctx7 skills install /owner/repo name  # Install a specific skill
+ctx7 skills search <keywords>         # Search the registry
+ctx7 skills suggest                   # Auto-suggest based on project deps
+ctx7 skills list                      # List installed skills
+ctx7 skills remove <name>             # Uninstall a skill
+ctx7 skills generate                  # Generate a custom skill with AI (requires login)
+
+# Setup
+ctx7 setup                            # Configure Context7 MCP (interactive)
+ctx7 login                            # Log in for higher rate limits + skill generation
+ctx7 whoami                           # Check current login status
+```
+
+--------------------------------
+
+### Start Docker Compose Services
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/deployment/scaling.mdx
+
+Run the Docker Compose stack in detached mode to start all services.
+
+```bash
+docker compose up -d
+
+```
+
+--------------------------------
+
+### Install Upstash Context7 AI SDK and dependencies
+
+Source: https://github.com/upstash/context7/blob/master/packages/tools-ai-sdk/README.md
+
+Install the necessary packages including the Context7 AI SDK, the core SDK, Vercel AI SDK, and Zod using npm.
+
+```bash
+npm install @upstash/context7-tools-ai-sdk @upstash/context7-sdk ai zod
+```
+
+--------------------------------
+
+### Authenticate ctx7 setup
+
+Source: https://github.com/upstash/context7/blob/master/docs/clients/cli.mdx
+
+Specifies authentication credentials directly with an API key or delegates OAuth handling to the host IDE in MCP mode.
+
+```bash
+# Use an existing API key (works for both MCP and CLI + Skills mode)
+ctx7 setup --api-key YOUR_API_KEY
+
+# Use OAuth endpoint — MCP mode only (IDE handles the auth flow)
+ctx7 setup --oauth
+```
+
+--------------------------------
+
+### Query documentation using npx
+
+Source: https://github.com/upstash/context7/blob/master/skills/find-docs/SKILL.md
+
+Run Context7 CLI commands directly using npx to ensure the latest version is used without a global installation.
+
+```bash
+npx ctx7@latest library <name> "<query>"
+npx ctx7@latest docs <libraryId> "<query>"
+```
+
+--------------------------------
+
+### Customize Context7Agent's system prompt (TypeScript)
+
+Source: https://github.com/upstash/context7/blob/master/docs/agentic-tools/ai-sdk/agents/context7-agent.mdx
+
+Shows how to override or extend the default system prompt of `Context7Agent` to guide the AI's behavior and response format, such as requesting TypeScript examples or version compatibility.
+
+```typescript
+import { Context7Agent, AGENT_PROMPT } from "@upstash/context7-tools-ai-sdk";
+import { openai } from "@ai-sdk/openai";
+
+const agent = new Context7Agent({
+  model: openai("gpt-5.2"),
+  system: `${AGENT_PROMPT}
+
+Additional instructions:
+- Always include TypeScript examples
+- Mention version compatibility when relevant
+- Suggest related documentation topics`,
+});
+```
+
+--------------------------------
+
+### Test Setup with MCP Inspector
+
+Source: https://github.com/upstash/context7/blob/master/docs/resources/troubleshooting.mdx
+
+Use the MCP inspector to verify your server configuration and tool functionality independently.
+
+```bash
+npx -y @modelcontextprotocol/inspector npx @upstash/context7-mcp
+```
+
+--------------------------------
+
+### Run Context7 MCP Server Locally
+
+Source: https://github.com/upstash/context7/blob/master/docs/resources/developer.mdx
+
+Starts the Context7 MCP server using the compiled JavaScript file.
+
+```bash
+node packages/mcp/dist/index.js
+```
+
+--------------------------------
+
+### Configure Copilot CLI MCP Server
+
+Source: https://github.com/upstash/context7/blob/master/docs/resources/all-clients.mdx
+
+Configuration examples for adding Context7 to ~/.copilot/mcp-config.json using either remote HTTP or local npx execution.
+
+```json
+{
+  "mcpServers": {
+    "context7": {
+      "type": "http",
+      "url": "https://mcp.context7.com/mcp",
+      "headers": {
+        "Authorization": "Bearer YOUR_API_KEY"
+      },
+      "tools": ["query-docs", "resolve-library-id"]
+    }
+  }
+}
+```
+
+```json
+{
+  "mcpServers": {
+    "context7": {
+      "type": "local",
+      "command": "npx",
+      "tools": ["query-docs", "resolve-library-id"],
+      "args": ["-y", "@upstash/context7-mcp", "--api-key", "YOUR_API_KEY"]
+    }
+  }
+}
+```
+
+--------------------------------
+
+### Pin a library version
+
+Source: https://github.com/upstash/context7/blob/master/docs/api-guide.mdx
+
+Examples of how to specify a library version within the library ID string.
+
+```text
+/vercel/next.js/v15.1.8
+/vercel/next.js@v15.1.8
+```
+
+--------------------------------
+
+### Prompting with Context7
+
+Source: https://github.com/upstash/context7/blob/master/packages/mcp/README.md
+
+Examples of how to trigger Context7 within an LLM prompt to retrieve specific library documentation or code generation.
+
+```txt
+Create a Next.js middleware that checks for a valid JWT in cookies
+and redirects unauthenticated users to `/login`. use context7
+```
+
+```txt
+Configure a Cloudflare Worker script to cache
+JSON API responses for five minutes. use context7
+```
+
+--------------------------------
+
+### Build Context7 MCP Project
+
+Source: https://github.com/upstash/context7/blob/master/docs/resources/developer.mdx
+
+Builds the Context7 MCP project after dependencies are installed.
+
+```bash
+pnpm run build
+```
+
+--------------------------------
+
+### Install Upstash Context7 SDK
+
+Source: https://github.com/upstash/context7/blob/master/packages/sdk/README.md
+
+Install the SDK package using npm to begin integrating Context7 documentation into your TypeScript project.
+
+```bash
+npm install @upstash/context7-sdk
+```
+
+--------------------------------
+
+### Browse AI Coding Skills in a Repository with ctx7 CLI
+
+Source: https://github.com/upstash/context7/blob/master/skills/context7-cli/references/skills.md
+
+The `ctx7 skills info` command allows users to preview the contents of a skill repository without installing it. It displays each skill's name, description, and URL, along with quick install commands. This is useful for evaluating available skills before committing to an installation.
+
+```bash
+ctx7 skills info /anthropics/skills
+```
+
+--------------------------------
+
+### Basic Usage of resolveLibraryId
+
+Source: https://github.com/upstash/context7/blob/master/docs/agentic-tools/ai-sdk/tools/resolve-library-id.mdx
+
+An example demonstrating how to use `resolveLibraryId` within an AI SDK `generateText` call to find available libraries for React.
+
+```typescript
+import { resolveLibraryId, queryDocs } from "@upstash/context7-tools-ai-sdk";
+import { generateText, stepCountIs } from "ai";
+import { openai } from "@ai-sdk/openai";
+
+const { text, toolCalls } = await generateText({
+  model: openai("gpt-5.2"),
+  prompt: "What libraries are available for React?",
+  tools: {
+    resolveLibraryId: resolveLibraryId(),
+    queryDocs: queryDocs(),
+  },
+  stopWhen: stepCountIs(5),
+});
+
+// The model will call resolveLibraryId and receive a list of matching libraries
+console.log(text);
+```
+
+--------------------------------
+
+### Remove Context7 Setup
+
+Source: https://github.com/upstash/context7/blob/master/README.md
+
+Command to remove the generated Context7 configuration.
+
+```bash
+npx ctx7 remove
+```
+
+--------------------------------
+
+### Deploy and Configure Self-hosted Milvus
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/deployment/vector-stores.mdx
+
+Commands to start a standalone Milvus instance and configure the corresponding environment variables.
+
+```bash
+curl -sfL https://raw.githubusercontent.com/milvus-io/milvus/master/scripts/standalone_embed.sh -o standalone_embed.sh
+bash standalone_embed.sh start
+```
+
+```bash
+VECTOR_STORE=milvus
+MILVUS_ADDRESS=localhost:19530
+```
+
+--------------------------------
+
+### Installing in Claude Code
+
+Source: https://github.com/upstash/context7/blob/master/packages/mcp/README.md
+
+Command to add the Context7 MCP server to the Claude Code environment.
+
+```sh
+claude mcp add --scope user context7 -- npx -y @upstash/context7-mcp --api-key YOUR_API_KEY
+```
+
+--------------------------------
+
+### Query Specificity Comparison
+
+Source: https://github.com/upstash/context7/blob/master/docs/clients/codex.mdx
+
+Examples demonstrating the difference between specific and non-specific queries for better results.
+
+```text
+# Good
+How do I handle file uploads with the Supabase Storage API?
+
+# Less specific
+How does Supabase storage work?
+```
+
+--------------------------------
+
+### Troubleshoot Write Permissions
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/deployment/kubernetes.mdx
+
+Example error message displayed when the container lacks write permissions for the specified UID.
+
+```text
+[config] Not writable by uid 12345: /data/context7.db, /data/logs, /data/vectors.
+[config] Set fsGroup on the volume so Kubernetes re-owns it for this uid, or chown
+it: chown -R 12345: /data. Note that hostPath-backed volumes ignore fsGroup.
+```
+
+--------------------------------
+
+### Run Context7 MCP with Stdio Transport and API Key
+
+Source: https://github.com/upstash/context7/blob/master/docs/resources/developer.mdx
+
+Starts the Context7 MCP server using stdio transport and authenticates with a provided API key.
+
+```bash
+node packages/mcp/dist/index.js --transport stdio --api-key YOUR_API_KEY
+```
+
+--------------------------------
+
+### Use alternative runtimes
+
+Source: https://github.com/upstash/context7/blob/master/docs/resources/troubleshooting.mdx
+
+Switch to bunx or deno if you encounter module resolution errors with npx.
+
+```json
+{
+  "mcpServers": {
+    "context7": {
+      "command": "bunx",
+      "args": ["-y", "@upstash/context7-mcp", "--api-key", "YOUR_API_KEY"]
+    }
+  }
+}
+```
+
+```json
+{
+  "mcpServers": {
+    "context7": {
+      "command": "deno",
+      "args": ["run", "--allow-env=NO_DEPRECATION,TRACE_DEPRECATION", "--allow-net", "npm:@upstash/context7-mcp"]
+    }
+  }
+}
+```
+
+--------------------------------
+
+### Configure MCP Server with Context7 API Key via Environment Variable
+
+Source: https://github.com/upstash/context7/blob/master/docs/resources/developer.mdx
+
+Example JSON configuration for an MCP server, passing the Context7 API key through an environment variable.
+
+```json
+{
+  "mcpServers": {
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp"],
+      "env": {
+        "CONTEXT7_API_KEY": "YOUR_API_KEY"
+      }
+    }
+  }
+}
+```
+
+--------------------------------
+
+### List Installed AI Coding Skills with ctx7 CLI
+
+Source: https://github.com/upstash/context7/blob/master/skills/context7-cli/references/skills.md
+
+The `ctx7 skills list` command displays all installed AI coding skills. Users can view skills installed for the current project across all detected IDEs, or filter by specific IDEs like Claude Code, and also view globally installed skills. This helps in managing and reviewing the active skill set.
+
+```bash
+ctx7 skills list                  # Current project (all detected IDEs)
+ctx7 skills list --claude         # Claude Code only
+ctx7 skills list --global         # Global skills
+ctx7 skills list --global --claude # Global Claude Code skills
+```
+
+--------------------------------
+
+### ctx7 docs
+
+Source: https://github.com/upstash/context7/blob/master/skills/context7-cli/references/docs.md
+
+Queries up-to-date documentation and code examples from Context7 using a library ID.
+
+```APIDOC
+## ctx7 docs <library_id> <query>
+
+### Description
+Queries up-to-date documentation and code examples from Context7 using a library ID.
+
+### Usage
+```bash
+ctx7 docs <library_id> <query>
+```
+
+### Arguments
+- **library_id** (string) - Required - Context7-compatible identifier in `/org/project` or `/org/project/version` format.
+- **query** (string) - Required - The query for documentation or code examples.
+
+### Example
+```bash
+ctx7 docs /vercel/next.js "How to set up app router"
+```
+```
+
+--------------------------------
+
+### Local MCP Configuration
+
+Source: https://github.com/upstash/context7/blob/master/packages/mcp/README.md
+
+Example configuration for running the server locally using tsx.
+
+```json
+{
+  "mcpServers": {
+    "context7": {
+      "command": "npx",
+      "args": ["tsx", "/path/to/folder/context7/src/index.ts", "--api-key", "YOUR_API_KEY"]
+    }
+  }
+}
+```
+
+--------------------------------
+
+### ctx7 docs
+
+Source: https://github.com/upstash/context7/blob/master/skills/context7-cli/references/docs.md
+
+Query documentation and code examples for a resolved library.
+
+```APIDOC
+## ctx7 docs
+
+### Description
+Retrieves up-to-date documentation and code examples for the resolved library.
+
+### Usage
+```bash
+ctx7 docs <library_id> "<query>" [options]
+```
+
+### Arguments
+- **library_id** (string) - Required - The exact Context7-compatible library ID in the format `/org/project` or `/org/project/version`.
+- **query** (string) - Required - The query describing what to look up in the library's documentation.
+
+### Options
+- **--json** - Optional - Output the results as structured JSON.
+
+### Examples
+```bash
+ctx7 docs /facebook/react "How to clean up useEffect with async operations"
+ctx7 docs /facebook/react "How to use hooks for state management" --json
+ctx7 docs /facebook/react "How to use hooks for state management" | head -50
+```
+```
+
+--------------------------------
+
+### Run ctx7 using npx
+
+Source: https://github.com/upstash/context7/blob/master/docs/clients/cli.mdx
+
+Execute ctx7 commands directly without installing globally.
+
+```bash
+npx ctx7 --help
+npx ctx7 library react
+```
+
+--------------------------------
+
+### End-to-End Library Search and Context Retrieval Workflow
+
+Source: https://github.com/upstash/context7/blob/master/docs/sdks/ts/commands/search-library.mdx
+
+Provides a complete example of searching for a library, selecting the first result, and then using its unique ID to fetch specific documentation context for a question.
+
+```typescript
+import { Context7 } from "@upstash/context7-sdk";
+
+const client = new Context7();
+
+const libraries = await client.searchLibrary(
+  "I want to build a React app",
+  "react"
+);
+
+const library = libraries[0];
+console.log(`Using: ${library.name} (${library.id})`);
+
+const context = await client.getContext(
+  "How do I create a component?",
+  library.id
+);
+
+console.log(context);
+```
+
+--------------------------------
+
+### Install Mastra MCP Package
+
+Source: https://github.com/upstash/context7/blob/master/docs/integrations/mastra.mdx
+
+Add the required package to your project dependencies.
+
+```bash
+npm install @mastra/mcp@latest
+```
+
+--------------------------------
+
+### Querying the Context7 API with cURL
+
+Source: https://github.com/upstash/context7/blob/master/docs/api-guide.mdx
+
+Examples of querying the API with specific natural language queries and different library sources.
+
+```bash
+# Good - specific question
+curl "https://context7.com/api/v2/context?libraryId=/vercel/next.js&query=How%20to%20implement%20authentication%20with%20middleware" \
+  -H "Authorization: Bearer CONTEXT7_API_KEY"
+
+# Less optimal - vague query
+curl "https://context7.com/api/v2/context?libraryId=/vercel/next.js&query=auth" \
+  -H "Authorization: Bearer CONTEXT7_API_KEY"
+
+# Non-GitHub source (website) - same endpoint, same shape
+curl "https://context7.com/api/v2/context?libraryId=/websites/uploadcare&query=image%20transformations" \
+  -H "Authorization: Bearer CONTEXT7_API_KEY"
+```
+
+--------------------------------
+
+### Prompt specificity examples for docs search
+
+Source: https://github.com/upstash/context7/blob/master/docs/clients/opencode.mdx
+
+Illustrates good versus less specific prompt patterns when requesting library help.
+
+```text
+# Good
+How do I handle file uploads with the Supabase Storage API?
+
+# Less specific
+How does Supabase storage work?
+```
+
+--------------------------------
+
+### Install Context7 as a Codex Plugin
+
+Source: https://github.com/upstash/context7/blob/master/docs/clients/codex.mdx
+
+Add the Context7 plugin to your Codex environment to enable documentation lookup skills.
+
+```bash
+codex plugin marketplace add upstash/context7
+codex plugin add context7@context7-marketplace
+```
+
+--------------------------------
+
+### Search Library - Sorting by Benchmark Score
+
+Source: https://github.com/upstash/context7/blob/master/docs/sdks/ts/commands/search-library.mdx
+
+Example showing how to search for libraries and sort results by benchmark score to find the best documented library for your use case.
+
+```APIDOC
+## Selecting Best Library Example
+
+### Description
+Demonstrates how to search for libraries and sort by benchmark score to identify the highest quality documentation.
+
+### Code Example
+```typescript
+import { Context7 } from "@upstash/context7-sdk";
+
+const client = new Context7();
+
+const libraries = await client.searchLibrary(
+  "I want to build a web app",
+  "next"
+);
+
+const sorted = libraries.sort((a, b) => b.benchmarkScore - a.benchmarkScore);
+const best = sorted[0];
+
+console.log(`Best match: ${best.name} (score: ${best.benchmarkScore})`);
+console.log(`Available snippets: ${best.totalSnippets}`);
+```
+
+### Usage
+This example demonstrates:
+1. Searching for libraries with a specific query
+2. Sorting results by benchmarkScore in descending order
+3. Accessing the top-ranked library
+4. Displaying quality metrics
+```
+
+--------------------------------
+
+### GET /v2/context
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/api/context/get-documentation-context.mdx
+
+Retrieve documentation snippets for a library ranked by relevance to your query.
+
+```APIDOC
+## GET /v2/context
+
+### Description
+Retrieve documentation snippets for a library ranked by relevance to your query
+
+### Method
+GET
+
+### Endpoint
+/v2/context
+```
+
+--------------------------------
+
+### Configure Custom AI Provider Settings
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/on-premise.mdx
+
+Examples for configuring Context7 to use custom LLM providers, such as OpenRouter or local models like Ollama/vLLM, by specifying the provider, base URL, model, and API key.
+
+```text
+Provider: custom
+Base URL: https://openrouter.ai/api/v1
+Model: openai/gpt-4o
+API Key: sk-or-v1-...
+```
+
+```text
+Provider: custom
+Base URL: http://host.docker.internal:11434/v1
+Model: llama3.2
+API Key: ollama
+```
+
+--------------------------------
+
+### Git Repository Exclusion Pattern Examples
+
+Source: https://github.com/upstash/context7/blob/master/docs/howto/claiming-libraries.mdx
+
+Examples of glob patterns used to exclude specific folders or files when parsing a Git repository. These patterns apply to the 'Folders to Exclude' and 'Files to Exclude' configuration fields.
+
+```plaintext
+node_modules     → Excludes any folder named "node_modules" anywhere
+./build          → Excludes "build" only at repository root
+**/dist          → Excludes any "dist" folder anywhere (globstar)
+docs/**/internal → Excludes "internal" folders under docs
+*.test           → Excludes folders ending with .test
+```
+
+--------------------------------
+
+### Configure MCP Server on macOS
+
+Source: https://github.com/upstash/context7/blob/master/docs/resources/troubleshooting.mdx
+
+Specify the absolute path to the Node.js binary and the package installation directory to fix timeout errors on macOS.
+
+```json
+{
+  "mcpServers": {
+    "context7": {
+      "command": "/Users/yourname/.nvm/versions/node/v22.14.0/bin/node",
+      "args": [
+        "/Users/yourname/.nvm/versions/node/v22.14.0/lib/node_modules/@upstash/context7-mcp/dist/index.js",
+        "--transport",
+        "stdio",
+        "--api-key",
+        "YOUR_API_KEY"
+      ]
+    }
+  }
+}
+```
+
+--------------------------------
+
+### Manual Documentation Queries with `/context7:docs` Command
+
+Source: https://github.com/upstash/context7/blob/master/docs/clients/copilot-cli.mdx
+
+Use the `/context7:docs` command for quick, manual documentation lookups when you know the library and topic.
+
+```copilot-cli
+/context7:docs react hooks
+/context7:docs next.js authentication
+/context7:docs prisma relations
+```
+
+--------------------------------
+
+### POST /parse-website
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/api/parse/parse-a-website.mdx
+
+Crawl and index a public website starting from the given URL.
+
+```APIDOC
+## POST /parse-website
+
+### Description
+Crawl and index a public website starting from the given URL
+
+### Method
+POST
+
+### Endpoint
+/parse-website
+```
+
+--------------------------------
+
+### Health Check Response Example
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/deployment/kubernetes.mdx
+
+Sample JSON output from the /api/health endpoint.
+
+```json
+{
+  "status": "healthy",
+  "version": "1.0.0",
+  "setup": "complete",
+  "license": "configured",
+  "licenseInfo": {
+    "valid": true,
+    "teamSize": 10,
+    "expiresAt": "2026-06-01T00:00:00.000Z"
+  },
+  "repos_parsed": 5,
+  "uptime": 3600,
+  "connectivity": {
+    "llm": "configured",
+    "llm_provider": "openai",
+    "embedding": "configured",
+    "embedding_provider": "openai",
+    "github": "configured",
+    "gitlab": "not configured"
+  }
+}
+```
+
+--------------------------------
+
+### GET /api/gitops/status
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/gitops.mdx
+
+Retrieves the current GitOps configuration and the result of the last synchronization.
+
+```APIDOC
+## GET /api/gitops/status
+
+### Description
+Returns the current configuration and the status of the last sync operation.
+
+### Method
+GET
+
+### Endpoint
+/api/gitops/status
+```
+
+--------------------------------
+
+### Manual Documentation Queries with /context7:docs Command
+
+Source: https://github.com/upstash/context7/blob/master/plugins/claude/context7/README.md
+
+Use the `/context7:docs` command for direct, manual lookups of documentation, specifying a library and query.
+
+```bash
+/context7:docs next.js app router
+/context7:docs /vercel/next.js/v15.1.8 middleware
+```
+
+--------------------------------
+
+### Configure Environment Variables for Docker Compose
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/deployment/scaling.mdx
+
+Define the license key, database password, and encryption key in a local .env file before starting the services.
+
+```bash
+LICENSE_KEY=ctx7sk-...
+POSTGRES_PASSWORD=change-me
+# openssl rand -hex 32
+ENCRYPTION_KEY=
+
+```
+
+--------------------------------
+
+### GET /parse-status
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/api/parse/get-parse-status.mdx
+
+Returns the status of all active and queued parse jobs.
+
+```APIDOC
+## GET /parse-status
+
+### Description
+Returns the status of all active and queued parse jobs
+
+### Method
+GET
+
+### Endpoint
+/parse-status
+```
+
+--------------------------------
+
+### Specifying Library Version in Context7 ID
+
+Source: https://github.com/upstash/context7/blob/master/plugins/codex/context7/README.md
+
+These examples illustrate how to include a specific version number in the library ID when requesting documentation from Context7.
+
+```text
+/vercel/next.js/v15.1.8
+/supabase/supabase/v2.45.0
+```
+
+--------------------------------
+
+### Process Individual Documentation Snippets (TypeScript)
+
+Source: https://github.com/upstash/context7/blob/master/docs/sdks/ts/commands/get-context.mdx
+
+This example retrieves documentation in JSON format and iterates through each snippet to log its title, source, and content length, demonstrating how to work with individual `Documentation` objects.
+
+```typescript
+import { Context7 } from "@upstash/context7-sdk";
+
+const client = new Context7();
+
+const docs = await client.getContext(
+  "How to create components?",
+  "/facebook/react",
+  { type: "json" }
+);
+
+docs.forEach((doc) => {
+  console.log(`Title: ${doc.title}`);
+  console.log(`Source: ${doc.source}`);
+  console.log(`Content length: ${doc.content.length} chars`);
+});
+```
+
+--------------------------------
+
+### POST /import-libraries
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/api/parse/import-libraries.mdx
+
+Import pre-parsed libraries into an airgapped on-premise install. This endpoint supports data provided as a JSON body or via a Context7 Cloud export file.
+
+```APIDOC
+## POST /import-libraries
+
+### Description
+Import pre-parsed libraries into an airgapped on-premise install, as a JSON body or a Context7 Cloud export file.
+
+### Method
+POST
+
+### Endpoint
+/import-libraries
+```
+
+--------------------------------
+
+### Fetch documentation using ctx7 CLI
+
+Source: https://github.com/upstash/context7/blob/master/rules/context7-cli.md
+
+Use this command to fetch documentation for a specific library ID.
+
+```bash
+npx ctx7@latest docs <libraryId> "<what to look up>"
+```
+
+--------------------------------
+
+### Uninstall Global CLI
+
+Source: https://github.com/upstash/context7/blob/master/README.md
+
+Command to remove the globally installed Context7 CLI package.
+
+```bash
+npm uninstall -g ctx7
+```
+
+--------------------------------
+
+### Run Context7 MCP with HTTP Transport on Port 8080
+
+Source: https://github.com/upstash/context7/blob/master/docs/resources/developer.mdx
+
+Starts the Context7 MCP server configured to use HTTP transport and listen on port 8080.
+
+```bash
+node packages/mcp/dist/index.js --transport http --port 8080
+```
+
+--------------------------------
+
+### context7.json Configuration File Content
+
+Source: https://github.com/upstash/context7/blob/master/docs/howto/claiming-libraries.mdx
+
+This JSON configuration, containing your library's URL and public key, is essential for claiming ownership. The "url" and "public_key" must match the values provided in the Context7 claiming modal and your library's specific setup.
+
+```json
+{
+  "url": "https://context7.com/vercel/next.js",
+  "public_key": "pk_abc123xyz..."
+}
+```
+
+```json
+{
+  "url": "https://context7.com/websites/mylib",
+  "public_key": "pk_abc123xyz..."
+}
+```
+
+--------------------------------
+
+### POST /api/import-libraries
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/library-import.mdx
+
+Imports library data into an on-premise installation. Supports JSON payloads or multipart/form-data ZIP bundles.
+
+```APIDOC
+## POST /api/import-libraries
+
+### Description
+Imports library content into an on-premise install. This endpoint is available only on offline-license installs. It can accept the JSON response from the export endpoint or a ZIP bundle.
+
+### Method
+POST
+
+### Endpoint
+/api/import-libraries
+
+### Parameters
+#### Query Parameters
+- **force** (boolean) - Optional - If set to true, overwrites libraries that already exist.
+
+#### Request Body
+- **libraries** (array) - Optional - An array of library objects to import.
+- **force** (boolean) - Optional - If set to true, overwrites libraries that already exist.
+- **bundleFile** (file) - Optional - A .zip bundle upload using multipart/form-data.
+
+### Request Example
+```json
+{
+  "libraries": [...],
+  "force": false
+}
+```
+
+### Response
+#### Success Response (200)
+- **queued** (array) - A list of libraries successfully queued for import.
+- **skipped** (array) - A list of libraries that already exist and were skipped.
+```
+
+--------------------------------
+
+### Configure LM Studio
+
+Source: https://github.com/upstash/context7/blob/master/docs/resources/all-clients.mdx
+
+Sets up the Context7 MCP server within LM Studio's mcp.json configuration file.
+
+```json
+{
+  "mcpServers": {
+    "Context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp", "--api-key", "YOUR_API_KEY"]
+    }
+  }
+}
+```
+
+--------------------------------
+
+### queryDocs Tool Output Formats
+
+Source: https://github.com/upstash/context7/blob/master/docs/agentic-tools/ai-sdk/tools/query-docs.mdx
+
+Examples of successful documentation retrieval and failure messages returned by the tool.
+
+```text
+# Server Components
+
+Server Components let you write UI that can be rendered and optionally cached on the server.
+
+## Example
+
+```tsx
+async function ServerComponent() {
+  const data = await fetchData();
+  return <div>{data}</div>;
+}
+```
+
+---
+
+# Using Server Components with Client Components
+
+You can import Server Components into Client Components...
+```
+
+```text
+No documentation found for library "/invalid/library". This might have happened because you used an invalid Context7-compatible library ID. Use 'resolveLibraryId' to get a valid ID.
+```
+
+--------------------------------
+
+### Access Library Admin Page via Direct URL
+
+Source: https://github.com/upstash/context7/blob/master/docs/howto/claiming-libraries.mdx
+
+Use this URL pattern to directly access your library's admin configuration page. Replace {owner} and {repo} with your specific details, or use the example for a concrete instance.
+
+```url
+https://context7.com/{owner}/{repo}/admin
+```
+
+```url
+https://context7.com/vercel/next.js/admin
+```
+
+--------------------------------
+
+### POST agent.generate()
+
+Source: https://github.com/upstash/context7/blob/master/docs/agentic-tools/ai-sdk/agents/context7-agent.mdx
+
+Execute a synchronous documentation lookup query using the agent. Returns the complete generated response with documentation context and code examples.
+
+```APIDOC
+## POST agent.generate()
+
+### Description
+Executes a synchronous documentation lookup workflow. The agent processes the prompt through library identification, documentation retrieval, and response generation steps.
+
+### Method
+POST
+
+### Endpoint
+agent.generate()
+
+### Parameters
+
+#### Request Body
+- **prompt** (string) - Required - User query for documentation lookup (e.g., "How do I use React Server Components?")
+
+### Request Example
+```typescript
+const { text } = await agent.generate({
+  prompt: "How do I set up authentication in Next.js?"
+});
+```
+
+### Response
+
+#### Success Response
+- **text** (string) - Generated response with documentation context and code examples
+
+#### Response Example
+```typescript
+{
+  "text": "To set up authentication in Next.js, you can use NextAuth.js or Auth0. Here's a basic example..."
+}
+```
+```
+
+--------------------------------
+
+### Kiro MCP Server Configuration
+
+Source: https://github.com/upstash/context7/blob/master/packages/mcp/README.md
+
+Configuration snippets for Kiro, including remote and local server setups with optional authentication headers.
+
+```json
+{
+  "mcpServers": {
+    "Context7": {
+      "url": "https://mcp.context7.com/mcp"
+    }
+  }
+}
+```
+
+```json
+"headers": {
+  "Authorization": "Bearer YOUR_API_KEY"
+}
+```
+
+```json
+{
+  "mcpServers": {
+    "Context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp", "--api-key", "YOUR_API_KEY"],
+      "env": {},
+      "disabled": false,
+      "autoApprove": []
+    }
+  }
+}
+```
+
+--------------------------------
+
+### Remove AI Coding Skills with ctx7 CLI
+
+Source: https://github.com/upstash/context7/blob/master/skills/context7-cli/references/skills.md
+
+The `ctx7 skills remove` command allows users to uninstall a specific AI coding skill by name. Skills can be removed from the current project, from a specific IDE like Claude Code, or from global installations. This provides control over the installed skill set.
+
+```bash
+ctx7 skills remove pdf
+ctx7 skills remove pdf --claude   # From Claude Code only
+ctx7 skills remove pdf --global   # From global skills
+```
+
+--------------------------------
+
+### Initialize Context7 Client with Configuration Object
+
+Source: https://github.com/upstash/context7/blob/master/docs/sdks/ts/getting-started.mdx
+
+Initialize the Context7 client by passing the API key directly in a configuration object.
+
+```typescript
+import { Context7 } from "@upstash/context7-sdk";
+
+const client = new Context7({
+  apiKey: "YOUR_API_KEY"
+});
+```
+
+--------------------------------
+
+### Search Library - Finding Libraries by Trust Score
+
+Source: https://github.com/upstash/context7/blob/master/docs/sdks/ts/commands/search-library.mdx
+
+Example demonstrating how to search for libraries and filter results by trust score to find the most reliable libraries.
+
+```APIDOC
+## Finding Libraries by Trust Score
+
+### Description
+Shows how to search for libraries and sort by trust score to identify the most reliable options.
+
+### Code Example
+```typescript
+const libraries = await client.searchLibrary("state management", "redux");
+
+const trusted = libraries.sort((a, b) => b.trustScore - a.trustScore);
+console.log("Most trusted:", trusted[0].name);
+```
+
+### Usage
+This example demonstrates:
+1. Searching for libraries with a specific domain query
+2. Sorting results by trustScore in descending order
+3. Accessing the most trusted library
+4. Useful for finding well-maintained and reliable libraries
+```
+
+--------------------------------
+
+### Search Library - Error Handling
+
+Source: https://github.com/upstash/context7/blob/master/docs/sdks/ts/commands/search-library.mdx
+
+Example showing proper error handling when searching for libraries, including handling empty results and API errors.
+
+```APIDOC
+## Error Handling Example
+
+### Description
+Demonstrates proper error handling for library search operations.
+
+### Code Example
+```typescript
+import { Context7, Context7Error } from "@upstash/context7-sdk";
+
+const client = new Context7();
+
+try {
+  const libraries = await client.searchLibrary("query", "express");
+
+  if (libraries.length === 0) {
+    console.log("No libraries found");
+  } else {
+    console.log(`Found ${libraries.length} libraries`);
+  }
+} catch (error) {
+  if (error instanceof Context7Error) {
+    console.error("API Error:", error.message);
+  } else {
+    throw error;
+  }
+}
+```
+
+### Usage
+This example shows:
+1. Try-catch block for error handling
+2. Checking for empty result sets
+3. Catching Context7Error exceptions
+4. Proper error logging and recovery
+```
+
+--------------------------------
+
+### Search AI Coding Skills by Keyword with ctx7 CLI
+
+Source: https://github.com/upstash/context7/blob/master/skills/context7-cli/references/skills.md
+
+The `ctx7 skills search` command enables users to find AI coding skills across the registry using keywords. It displays an interactive list with install counts and trust scores, allowing direct installation. This helps discover relevant skills for various programming languages and frameworks.
+
+```bash
+ctx7 skills search pdf
+ctx7 skills search typescript testing
+ctx7 skills search react nextjs
+```
+
+--------------------------------
+
+### Suggest AI Coding Skills based on Project Dependencies with ctx7 CLI
+
+Source: https://github.com/upstash/context7/blob/master/skills/context7-cli/references/skills.md
+
+The `ctx7 skills suggest` command automatically detects project dependencies from files like `package.json` or `requirements.txt` and recommends relevant skills. Suggestions can be installed to the current project or globally, and can target specific IDEs. If no dependencies are found, it suggests using the search command.
+
+```bash
+ctx7 skills suggest           # Scan current project, install to project
+ctx7 skills suggest --global  # Install suggestions globally
+ctx7 skills suggest --claude  # Target Claude Code only
+```
+
+--------------------------------
+
+### Integrate Context7 tools with Vercel AI SDK generateText
+
+Source: https://github.com/upstash/context7/blob/master/packages/tools-ai-sdk/README.md
+
+This example demonstrates how to use resolveLibrary and getLibraryDocs tools within the generateText function. It enables the AI model to dynamically fetch documentation to answer user prompts.
+
+```typescript
+import { resolveLibrary, getLibraryDocs } from "@upstash/context7-tools-ai-sdk";
+import { generateText, stepCountIs } from "ai";
+import { openai } from "@ai-sdk/openai";
+
+const { text } = await generateText({
+  model: openai("gpt-4o"),
+  prompt: "How do I use React Server Components?",
+  tools: {
+    resolveLibrary: resolveLibrary(),
+    getLibraryDocs: getLibraryDocs(),
+  },
+  stopWhen: stepCountIs(5),
+});
+
+console.log(text);
+```
+
+--------------------------------
+
+### GET /v2/libs/search
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/api/search/search-for-libraries.mdx
+
+Search locally indexed libraries by name. This endpoint provides a way to query the library index.
+
+```APIDOC
+## GET /v2/libs/search
+
+### Description
+Search locally indexed libraries by name
+
+### Method
+GET
+
+### Endpoint
+/v2/libs/search
+```
+
+--------------------------------
+
+### Explicitly Invoking Context7 for Documentation
+
+Source: https://github.com/upstash/context7/blob/master/plugins/codex/context7/README.md
+
+These examples show how to explicitly invoke the Context7 plugin within a Codex thread to request documentation for specific topics.
+
+```text
+use context7 for Next.js middleware docs
+use context7 for Prisma query examples with relations
+use context7 for the Supabase syntax for row-level security
+```
+
+--------------------------------
+
+### Access Application Logs
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/deployment/kubernetes.mdx
+
+Commands to stream logs or inspect the initial startup sequence.
+
+```bash
+# Follow logs
+kubectl logs -f -n context7 context7-0
+
+# Check license and startup status
+kubectl logs -n context7 context7-0 | head -20
+```
+
+--------------------------------
+
+### Using Context7 with Specific Library IDs in Copilot Chat
+
+Source: https://github.com/upstash/context7/blob/master/docs/clients/vscode.mdx
+
+Provide a library ID directly after 'use context7 with' in your Copilot Chat prompts to skip resolution and get documentation for a specific library.
+
+```plaintext
+use context7 with /supabase/supabase for authentication docs
+use context7 with /vercel/next.js for app router setup
+```
+
+--------------------------------
+
+### Add and Authenticate Context7 Server with OAuth in OpenClaw
+
+Source: https://github.com/upstash/context7/blob/master/docs/resources/all-clients.mdx
+
+Registers the Context7 OAuth endpoint in OpenClaw MCP client and starts browser-based login flow.
+
+```sh
+openclaw mcp add context7 \
+  --url https://mcp.context7.com/mcp/oauth \
+  --transport streamable-http \
+  --auth oauth
+
+openclaw mcp login context7
+```
+
+--------------------------------
+
+### Configure MCP server with bunx
+
+Source: https://github.com/upstash/context7/blob/master/packages/mcp/README.md
+
+Use bunx to resolve module not found errors during MCP server initialization.
+
+```json
+{
+  "mcpServers": {
+    "context7": {
+      "command": "bunx",
+      "args": ["-y", "@upstash/context7-mcp"]
+    }
+  }
+}
+```
+
+--------------------------------
+
+### Multi-Step Documentation Retrieval with Anthropic
+
+Source: https://github.com/upstash/context7/blob/master/docs/agentic-tools/ai-sdk/tools/query-docs.mdx
+
+Increase the step limit to allow the model to perform multiple documentation lookups for complex queries. This is useful for generating comprehensive guides from multiple sources.
+
+```typescript
+import { resolveLibraryId, queryDocs } from "@upstash/context7-tools-ai-sdk";
+import { generateText, stepCountIs } from "ai";
+import { anthropic } from "@ai-sdk/anthropic";
+
+const { text } = await generateText({
+  model: anthropic("claude-sonnet-4-20250514"),
+  prompt: "Give me a comprehensive guide to Supabase authentication",
+  tools: {
+    resolveLibraryId: resolveLibraryId(),
+    queryDocs: queryDocs(),
+  },
+  stopWhen: stepCountIs(8), // Allow more steps for multiple queries
+});
+
+// The model may call queryDocs multiple times with different queries
+// to gather comprehensive documentation
+```
+
+--------------------------------
+
+### GET /v2/libs/search
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/api/authentication.mdx
+
+Search endpoint for querying libraries. This endpoint is publicly accessible by default unless a global API_KEY environment variable is set.
+
+```APIDOC
+## GET /v2/libs/search
+
+### Description
+Search endpoint for querying libraries. This endpoint is publicly accessible unless a global API_KEY environment variable is set.
+
+### Method
+GET
+
+### Endpoint
+/v2/libs/search
+```
+
+--------------------------------
+
+### Run pgvector PostgreSQL Container
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/deployment/scaling.mdx
+
+Start a self-hosted PostgreSQL instance with pgvector pre-installed using Docker. Ensure the shared memory size (--shm-size) is sufficient for parallel HNSW index builds.
+
+```bash
+docker run -d --name postgres \
+  -e POSTGRES_PASSWORD=... -e POSTGRES_DB=context7 \
+  -p 5432:5432 --shm-size=1g \
+  pgvector/pgvector:pg16
+```
+
+--------------------------------
+
+### Resolve Library ID Tool Input and Output Example
+
+Source: https://github.com/upstash/context7/blob/master/plugins/cursor/context7/README.md
+
+This snippet illustrates the input format for the `resolve-library-id` tool and its corresponding JSON output. The tool takes a library name as input and returns a Context7-compatible identifier, including the library's name and a list of available versions.
+
+```text
+"next.js"
+```
+
+```json
+{
+  "id": "/vercel/next.js",
+  "name": "Next.js",
+  "versions": ["v15.1.8", "v14.2.0", "..."]
+}
+```
+
+--------------------------------
+
+### Configure Context7 on Windows
+
+Source: https://github.com/upstash/context7/blob/master/docs/resources/all-clients.mdx
+
+Uses cmd to execute npx on Windows platforms. Replace YOUR_API_KEY with your API key.
+
+```json
+{
+  "mcpServers": {
+    "context7": {
+      "command": "cmd",
+      "args": ["/c", "npx", "-y", "@upstash/context7-mcp", "--api-key", "YOUR_API_KEY"],
+      "disabled": false,
+      "autoApprove": []
+    }
+  }
+}
+```
+
+--------------------------------
+
+### Verify pgvector Extension Version
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/deployment/scaling.mdx
+
+Check the installed version of the pgvector extension. Context7 requires version 0.5.0 or newer for HNSW index support.
+
+```sql
+SELECT extversion FROM pg_extension WHERE extname = 'vector';
+```
+
+--------------------------------
+
+### Configure Context7 on Windows
+
+Source: https://github.com/upstash/context7/blob/master/packages/mcp/README.md
+
+Configuration for running the Context7 MCP server on Windows using npx.
+
+```json
+{
+  "mcpServers": {
+    "github.com/upstash/context7-mcp": {
+      "command": "cmd",
+      "args": ["/c", "npx", "-y", "@upstash/context7-mcp", "--api-key", "YOUR_API_KEY"],
+      "disabled": false,
+      "autoApprove": []
+    }
+  }
+}
+```
+
+--------------------------------
+
+### Configure MCP Server on Windows
+
+Source: https://github.com/upstash/context7/blob/master/docs/resources/troubleshooting.mdx
+
+Use the full path to the Node.js executable and the package index file to resolve timeout errors on Windows.
+
+```json
+{
+  "mcpServers": {
+    "context7": {
+      "command": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "C:\\Users\\yourname\\AppData\\Roaming\\npm\\node_modules\\@upstash\\context7-mcp\\dist\\index.js",
+        "--transport",
+        "stdio",
+        "--api-key",
+        "YOUR_API_KEY"
+      ]
+    }
+  }
+}
+```
+
+```json
+{
+  "mcpServers": {
+    "context7": {
+      "command": "cmd",
+      "args": ["/c", "npx", "-y", "@upstash/context7-mcp", "--api-key", "YOUR_API_KEY"]
+    }
+  }
+}
+```
+
+--------------------------------
+
+### GET /v2/context
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/api/authentication.mdx
+
+Context endpoint for retrieving context information. This endpoint is publicly accessible by default unless a global API_KEY environment variable is set.
+
+```APIDOC
+## GET /v2/context
+
+### Description
+Context endpoint for retrieving context information. This endpoint is publicly accessible unless a global API_KEY environment variable is set.
+
+### Method
+GET
+
+### Endpoint
+/v2/context
+```
+
+--------------------------------
+
+### Remove Context7 configuration with ctx7 remove
+
+Source: https://github.com/upstash/context7/blob/master/docs/clients/cli.mdx
+
+Removes MCP server and CLI configurations added by ctx7 setup, either interactively or targeted by agent and mode.
+
+```bash
+# Interactive
+ctx7 remove
+
+# Target specific agents
+ctx7 remove --cursor
+ctx7 remove --claude --project
+
+# Remove both setup modes explicitly
+ctx7 remove --cursor --all
+
+# Remove only one setup mode
+ctx7 remove --cursor --cli
+ctx7 remove --claude --mcp
+```
+
+--------------------------------
+
+### Prompt for Cloudflare Worker Caching with Context7
+
+Source: https://github.com/upstash/context7/blob/master/docs/overview.mdx
+
+This prompt guides an AI coding assistant to create a Cloudflare Worker script for caching JSON API responses, utilizing Context7 for current documentation.
+
+```txt
+Configure a Cloudflare Worker script to cache JSON API responses for five minutes. use context7
+```
+
+--------------------------------
+
+### Configure Context7 MCP Server for Bun and Deno
+
+Source: https://github.com/upstash/context7/blob/master/docs/resources/all-clients.mdx
+
+Alternative configuration options for executing the local Context7 MCP server using Bun or Deno runtimes. Ensure appropriate environment and network flags are provided when using Deno.
+
+```json
+{
+  "mcpServers": {
+    "context7": {
+      "command": "bunx",
+      "args": ["-y", "@upstash/context7-mcp", "--api-key", "YOUR_API_KEY"]
+    }
+  }
+}
+```
+
+```json
+{
+  "mcpServers": {
+    "context7": {
+      "command": "deno",
+      "args": [
+        "run",
+        "--allow-env=NO_DEPRECATION,TRACE_DEPRECATION",
+        "--allow-net",
+        "npm:@upstash/context7-mcp"
+      ]
+    }
+  }
+}
+```
+
+--------------------------------
+
+### Configure MCP Client
+
+Source: https://github.com/upstash/context7/blob/master/docs/integrations/mastra.mdx
+
+Initialize the MCPClient with the Context7 server URL and authentication headers.
+
+```typescript
+import { MCPClient } from "@mastra/mcp";
+
+const context7 = new MCPClient({
+  id: "context7",
+  servers: {
+    context7: {
+      url: new URL("https://mcp.context7.com/mcp"),
+      requestInit: {
+        headers: {
+          Authorization: `Bearer ${process.env.CONTEXT7_API_KEY}`,
+        },
+      },
+    },
+  },
+});
+```
+
+--------------------------------
+
+### Add Context7 instructions to AGENTS.md
+
+Source: https://github.com/upstash/context7/blob/master/docs/clients/opencode.mdx
+
+Configures project agents to use Context7 when searching for documentation.
+
+```markdown
+When you need to search docs, use Context7.
+```
+
+--------------------------------
+
+### Specify Library Version in Prompt
+
+Source: https://github.com/upstash/context7/blob/master/README.md
+
+Include the version number in the prompt to ensure Context7 retrieves documentation for the correct release.
+
+```txt
+How do I set up Next.js 14 middleware? use context7
+```
+
+--------------------------------
+
+### Generate Custom AI Coding Skills with ctx7 CLI
+
+Source: https://github.com/upstash/context7/blob/master/skills/context7-cli/references/skills.md
+
+The `ctx7 skills generate` command uses AI to create custom skills tailored to a user's stack. This feature requires login and involves an interactive flow to define expertise, select libraries, and answer clarifying questions. Generated skills can be installed directly to specific IDEs or globally, with usage limits for free and Pro accounts.
+
+```bash
+ctx7 skills generate
+ctx7 skills generate --claude   # Install directly to Claude Code
+ctx7 skills generate --global   # Install to global skills
+```
+
+--------------------------------
+
+### Configure Environment Variables
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/deployment/docker.mdx
+
+Store the license key in a .env file within the project directory.
+
+```bash
+LICENSE_KEY=ctx7sk-...
+```
+
+--------------------------------
+
+### Import library into on-premise instance via API
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/library-import.mdx
+
+Requires a personal API key for authentication. The endpoint accepts the JSON structure returned by the export API.
+
+```bash
+curl -X POST https://your-instance.example.com/api/import-libraries \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  --data @library.json
+```
+
+--------------------------------
+
+### Configure local Context7 MCP server in OpenAI Codex config.toml
+
+Source: https://github.com/upstash/context7/blob/master/docs/resources/all-clients.mdx
+
+Adds a local npx-based server configuration to config.toml with a custom startup timeout.
+
+```toml
+[mcp_servers.context7]
+command = "npx"
+args = ["-y", "@upstash/context7-mcp", "--api-key", "YOUR_API_KEY"]
+startup_timeout_ms = 20_000
+```
+
+--------------------------------
+
+### Search and retrieve documentation context in Python
+
+Source: https://github.com/upstash/context7/blob/master/docs/api-guide.mdx
+
+Demonstrates the workflow of searching for a library by name and then fetching its documentation context using the library ID.
+
+```python
+import os
+import requests
+
+headers = {"Authorization": f"Bearer {os.environ['CONTEXT7_API_KEY']}"}
+
+# Step 1: Search for the library
+search_response = requests.get(
+    "https://context7.com/api/v2/libs/search",
+    headers=headers,
+    params={"libraryName": "react", "query": "I need to manage state"}
+)
+data = search_response.json()
+best_match = data["results"][0]
+print(f"Found: {best_match['title']} ({best_match['id']})")
+
+# Step 2: Get documentation context
+context_response = requests.get(
+    "https://context7.com/api/v2/context",
+    headers=headers,
+    params={"libraryId": best_match["id"], "query": "How do I use useState?", "type": "json"}
+)
+docs = context_response.json()
+
+for snippet in docs["codeSnippets"]:
+    print(f"Title: {snippet['codeTitle']}")
+    for code in snippet["codeList"]:
+        print(f"Code: {code['code'][:200]}...")
+
+for info in docs["infoSnippets"]:
+    print(f"Content: {info['content'][:200]}...")
+```
+
+--------------------------------
+
+### Apply Kubernetes Manifests
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/deployment/kubernetes.mdx
+
+Apply the necessary configuration files to the cluster after setting up namespaces and secrets.
+
+```bash
+kubectl apply -f statefulset.yaml
+kubectl apply -f service.yaml
+kubectl apply -f ingress.yaml
+```
+
+--------------------------------
+
+### Deploy Scaled context7 Application on Kubernetes
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/deployment/scaling.mdx
+
+Run context7 as a multi-replica Deployment. State is external, so /data is configured as an emptyDir per-pod scratch space, and readiness/liveness probes are defined.
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: context7
+  namespace: context7
+spec:
+  replicas: 3
+  selector: { matchLabels: { app: context7 } }
+  template:
+    metadata: { labels: { app: context7 } }
+    spec:
+      imagePullSecrets:
+        - name: context7-registry
+      containers:
+        - name: context7
+          image: ghcr.io/context7/enterprise:latest
+          ports:
+            - { containerPort: 3000, name: http }
+          env:
+            - { name: DATA_DIR, value: /data }
+          envFrom:
+            - secretRef: { name: context7-env }
+          volumeMounts:
+            - { name: data, mountPath: /data }
+          readinessProbe:
+            httpGet: { path: /api/ready, port: http }
+            periodSeconds: 10
+          livenessProbe:
+            httpGet: { path: /api/health, port: http }
+            periodSeconds: 30
+      volumes:
+        - name: data
+          emptyDir: {}
+```
+
+--------------------------------
+
+### Command syntax for /context7:docs
+
+Source: https://github.com/upstash/context7/blob/master/plugins/copilot/context7/commands/docs.md
+
+Basic structure for querying documentation using a library name or ID.
+
+```shell
+/context7:docs <library> [query]
+```
+
+--------------------------------
+
+### View Plugin Directory Layout
+
+Source: https://github.com/upstash/context7/blob/master/plugins/agent-plugins/context7/README.md
+
+Displays the standard file structure for the Context7 plugin.
+
+```text
+context7/
+├── plugin.json
+├── mcp.json
+├── skills/
+│   └── context7-mcp/
+│       └── SKILL.md
+├── LICENSE
+└── README.md
+```
+
+--------------------------------
+
+### Add Context7 Server via Hermes CLI (Shell)
+
+Source: https://github.com/upstash/context7/blob/master/docs/resources/all-clients.mdx
+
+Run this Hermes CLI command to configure Context7 using OAuth authentication.
+
+```sh
+hermes mcp add context7 --url https://mcp.context7.com/mcp/oauth --auth oauth
+```
+
+--------------------------------
+
+### Build and Run Context7 in Docker
+
+Source: https://github.com/upstash/context7/blob/master/docs/resources/all-clients.mdx
+
+Containerizes the Context7 MCP server and configures the client to run the Docker container over stdio.
+
+```dockerfile
+FROM node:22-alpine
+WORKDIR /app
+RUN npm install -g @upstash/context7-mcp
+CMD ["context7-mcp", "--transport", "stdio"]
+```
+
+```bash
+docker build -t context7-mcp .
+```
+
+```json
+{
+  "mcpServers": {
+    "context7": {
+      "command": "docker",
+      "args": ["run", "-i", "--rm", "context7-mcp"],
+      "transportType": "stdio"
+    }
+  }
+}
+```
+
+--------------------------------
+
+### Basic Documentation Query with OpenAI and AI SDK
+
+Source: https://github.com/upstash/context7/blob/master/docs/agentic-tools/ai-sdk/tools/query-docs.mdx
+
+Combine resolveLibraryId and queryDocs to search for library documentation using natural language prompts. Ensure the step count allows for both resolution and querying.
+
+```typescript
+import { resolveLibraryId, queryDocs } from "@upstash/context7-tools-ai-sdk";
+import { generateText, stepCountIs } from "ai";
+import { openai } from "@ai-sdk/openai";
+
+const { text } = await generateText({
+  model: openai("gpt-5.2"),
+  prompt: "Show me how to set up routing in Next.js App Router",
+  tools: {
+    resolveLibraryId: resolveLibraryId(),
+    queryDocs: queryDocs(),
+  },
+  stopWhen: stepCountIs(5),
+});
+
+// The model will:
+// 1. Call resolveLibraryId to get the library ID
+// 2. Call queryDocs({ libraryId: "/vercel/next.js", query: "routing in App Router" })
+// 3. Generate a response using the fetched documentation
+```
+
+--------------------------------
+
+### Initialize Context7 Client with Environment Variable
+
+Source: https://github.com/upstash/context7/blob/master/docs/sdks/ts/getting-started.mdx
+
+Initialize the Context7 client without parameters when the API key is set via an environment variable.
+
+```typescript
+import { Context7 } from "@upstash/context7-sdk";
+
+const client = new Context7();
+```
+
+--------------------------------
+
+### Define Usage Guidance
+
+Source: https://github.com/upstash/context7/blob/master/docs/integrations/code-rabbit.mdx
+
+Provide these instructions in the CodeRabbit Usage Guidance field to direct the AI to utilize Context7 for library documentation lookups.
+
+```text
+Use Context7 to look up documentation for any libraries used in the code being reviewed.
+Verify that API usage matches the latest documentation and flag any deprecated patterns.
+```
+
+--------------------------------
+
+### Retrieve documentation with general or version-specific library IDs
+
+Source: https://github.com/upstash/context7/blob/master/skills/find-docs/SKILL.md
+
+Use the docs command to fetch documentation. You can target the latest indexed version or specify a precise version ID.
+
+```bash
+# General (latest indexed)
+npx ctx7@latest docs /vercel/next.js "How to set up app router"
+
+# Version-specific
+npx ctx7@latest docs /vercel/next.js/v14.3.0-canary.87 "How to set up app router"
+```
+
+--------------------------------
+
+### Query Context7 Library Documentation
+
+Source: https://github.com/upstash/context7/blob/master/packages/cli/README.md
+
+Fetch specific documentation for a library using its Context7 ID and a query string. The --json flag can be used for structured output.
+
+```bash
+ctx7 docs /facebook/react "useEffect cleanup"
+```
+
+```bash
+ctx7 docs /vercel/next.js "middleware"
+```
+
+```bash
+ctx7 docs /vercel/next.js "middleware authentication"
+```
+
+```bash
+ctx7 docs /prisma/prisma "one-to-many relations"
+```
+
+```bash
+ctx7 docs /facebook/react "hooks" --json
+```
+
+--------------------------------
+
+### Configure Registry Authentication and Secrets
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/deployment/kubernetes.mdx
+
+Create the necessary Kubernetes namespace, image pull secrets for ghcr.io, and configuration secrets using your license key.
+
+```bash
+LICENSE_KEY="<your-license-key>"
+
+# Get a registry token from Context7
+TOKEN=$(curl -s -H "Authorization: Bearer $LICENSE_KEY" \
+  https://context7.com/api/v1/license/registry-token | jq -r '.token')
+
+# Create the namespace and secrets
+kubectl create namespace context7
+
+kubectl create secret docker-registry context7-registry \
+  --namespace context7 \
+  --docker-server=ghcr.io \
+  --docker-username=x-access-token \
+  --docker-password="$TOKEN" \
+  --dry-run=client -o yaml | kubectl apply -f -
+
+kubectl create secret generic context7-config \
+  --namespace context7 \
+  --from-literal=LICENSE_KEY="$LICENSE_KEY" \
+  --dry-run=client -o yaml | kubectl apply -f -
+```
+
+--------------------------------
+
+### Configure Context7 in config.toml
+
+Source: https://github.com/upstash/context7/blob/master/docs/clients/codex.mdx
+
+Add these entries to your local or project-scoped configuration file to define the MCP server.
+
+```toml
+[mcp_servers.context7]
+command = "npx"
+args = ["-y", "@upstash/context7-mcp", "--api-key", "YOUR_API_KEY"]
+startup_timeout_ms = 20_000
+```
+
+```toml
+[mcp_servers.context7]
+url = "https://mcp.context7.com/mcp"
+http_headers = { "Authorization" = "Bearer YOUR_API_KEY" }
+```
+
+--------------------------------
+
+### Configure Zilliz Cloud Vector Store
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/deployment/vector-stores.mdx
+
+Environment variables required to connect Context7 to a Zilliz Cloud Milvus cluster.
+
+```bash
+VECTOR_STORE=milvus
+MILVUS_ADDRESS=https://your-cluster.zillizcloud.com
+MILVUS_TOKEN=<api-key>
+```
+
+--------------------------------
+
+### Manual Documentation Queries with `/context7:docs` and Library ID
+
+Source: https://github.com/upstash/context7/blob/master/docs/clients/copilot-cli.mdx
+
+Specify a library ID directly with `/context7:docs` to bypass the resolution step for precise documentation queries.
+
+```copilot-cli
+/context7:docs /vercel/next.js app router
+/context7:docs /supabase/supabase row level security
+```
+
+--------------------------------
+
+### Configure Context7 API key with Vercel CLI
+
+Source: https://github.com/upstash/context7/blob/master/docs/integrations/eve.mdx
+
+Adds the environment variable to a linked Vercel project and pulls it into .env.local.
+
+```bash
+vercel env add CONTEXT7_API_KEY
+vercel env pull .env.local
+```
+
+--------------------------------
+
+### Configure Context7 MCP via Amp CLI with API Key
+
+Source: https://github.com/upstash/context7/blob/master/docs/resources/all-clients.mdx
+
+Registers Context7 with authorization headers for higher rate limits and access to private repositories.
+
+```sh
+amp mcp add context7 --header "Authorization=Bearer YOUR_API_KEY" https://mcp.context7.com/mcp
+```
+
+--------------------------------
+
+### Query specific versions and parse JSON output
+
+Source: https://github.com/upstash/context7/blob/master/docs/clients/cli.mdx
+
+Fetch documentation for a specific version tag or format library resolution output as JSON for scripting.
+
+```bash
+# Fetch docs for a specific version
+ctx7 docs /vercel/next.js/v14.3.0-canary.87 "How to set up app router"
+
+# Output as JSON for scripting
+ctx7 library react "How to use hooks for state management" --json | jq '.[0].id'
+```
+
+--------------------------------
+
+### Build Docker Image for Context7
+
+Source: https://github.com/upstash/context7/blob/master/packages/mcp/README.md
+
+Dockerfile configuration to package the Context7 MCP server for containerized execution.
+
+```dockerfile
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Install the latest version globally
+RUN npm install -g @upstash/context7-mcp
+
+# Expose default port if needed (optional, depends on MCP client interaction)
+# EXPOSE 3000
+
+# Default command to run the server
+CMD ["context7-mcp", "--transport", "stdio"]
+```
+
+--------------------------------
+
+### Pinning Library Versions in API Queries
+
+Source: https://github.com/upstash/context7/blob/master/docs/api-guide.mdx
+
+Demonstrates how to pin specific library versions using either '/' or '@' syntax.
+
+```bash
+curl "https://context7.com/api/v2/context?libraryId=/vercel/next.js/v15.1.8&query=app%20router" \
+  -H "Authorization: Bearer CONTEXT7_API_KEY"
+
+curl "https://context7.com/api/v2/context?libraryId=/vercel/next.js@v15.1.8&query=app%20router" \
+  -H "Authorization: Bearer CONTEXT7_API_KEY"
+```
+
+--------------------------------
+
+### Spawn docs-researcher Agent for Focused Lookups
+
+Source: https://github.com/upstash/context7/blob/master/docs/clients/claude-code.mdx
+
+Use the `spawn docs-researcher` command to perform documentation lookups in a separate context, keeping your main conversation clean and focused.
+
+```bash
+spawn docs-researcher to look up React hooks documentation
+spawn docs-researcher: how do I set up Prisma with PostgreSQL?
+spawn docs-researcher to find Tailwind CSS grid utilities
+```
+
+--------------------------------
+
+### Configure Context7 API Key in .env File
+
+Source: https://github.com/upstash/context7/blob/master/docs/resources/developer.mdx
+
+Defines the CONTEXT7_API_KEY environment variable in a .env file for secure storage.
+
+```bash
+# .env
+CONTEXT7_API_KEY=your_api_key_here
+```
+
+--------------------------------
+
+### Configure Context7 in Visual Studio 2022
+
+Source: https://github.com/upstash/context7/blob/master/packages/mcp/README.md
+
+Add the server configuration to your Visual Studio MCP config file using either HTTP or stdio transport.
+
+```json
+{
+  "inputs": [],
+  "servers": {
+    "context7": {
+      "type": "http",
+      "url": "https://mcp.context7.com/mcp",
+      "headers": {
+        "Authorization": "Bearer YOUR_API_KEY"
+      }
+    }
+  }
+}
+```
+
+```json
+{
+  "mcp": {
+    "servers": {
+      "context7": {
+        "type": "stdio",
+        "command": "npx",
+        "args": ["-y", "@upstash/context7-mcp", "--api-key", "YOUR_API_KEY"]
+      }
+    }
+  }
+}
+```
+
+--------------------------------
+
+### Context7Agent Constructor
+
+Source: https://github.com/upstash/context7/blob/master/docs/agentic-tools/ai-sdk/agents/context7-agent.mdx
+
+Initialize a new Context7Agent instance with optional configuration. The agent automatically handles library identification, documentation lookup, and response generation.
+
+```APIDOC
+## Constructor: Context7Agent
+
+### Description
+Creates a new Context7Agent instance configured for documentation lookup workflows.
+
+### Method
+Constructor
+
+### Signature
+```typescript
+new Context7Agent(config?: Context7AgentConfig)
+```
+
+### Parameters
+
+#### Configuration Object (Optional)
+- **model** (LanguageModel) - Optional - Language model instance from AI SDK provider (e.g., anthropic('claude-sonnet-4-20250514'), openai('gpt-5.2'), google('gemini-1.5-pro'))
+- **apiKey** (string) - Optional - Context7 API key. Defaults to CONTEXT7_API_KEY environment variable if not provided
+- **system** (string) - Optional - Custom system prompt to override default AGENT_PROMPT
+- **stopWhen** (StopCondition) - Optional - Condition for agent termination. Defaults to stepCountIs(5)
+
+### Returns
+Context7Agent instance extending AI SDK Agent class with generate() and stream() methods
+
+### Request Example
+```typescript
+import { Context7Agent } from "@upstash/context7-tools-ai-sdk";
+import { anthropic } from "@ai-sdk/anthropic";
+
+const agent = new Context7Agent({
+  model: anthropic("claude-sonnet-4-20250514"),
+  apiKey: process.env.CONTEXT7_API_KEY,
+  stopWhen: stepCountIs(8)
+});
+```
+
+### Response
+Returns a Context7Agent instance ready to call generate() or stream() methods for documentation queries.
+```
+
+--------------------------------
+
+### Ask Agent a Documentation Question
+
+Source: https://github.com/upstash/context7/blob/master/packages/pi/README.md
+
+Provide a natural language query to the pi agent, and the Context7 tools will be automatically invoked to fetch relevant documentation.
+
+```plaintext
+how do I configure caching in Next.js 16?
+```
+
+--------------------------------
+
+### Restore Context7 Backup Using Docker Compose
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/backup-restore.mdx
+
+Sequence of commands to stop the Context7 server, run the restore utility against its volumes, and then restart the server using Docker Compose.
+
+```bash
+# 1. Stop the server
+docker compose stop context7
+```
+
+```bash
+# 2. Run the restore against the same volumes
+docker compose run --rm --no-deps context7 \
+  node dist/enterprise/restore.mjs /backups/context7-backup-2026-06-12T02-00-00.tar.gz --yes
+```
+
+```bash
+# 3. Start the server again
+docker compose start context7
+```
+
+--------------------------------
+
+### Configure Remote Server with API Key in Hermes (YAML)
+
+Source: https://github.com/upstash/context7/blob/master/docs/resources/all-clients.mdx
+
+Add to ~/.hermes/config.yaml to authenticate Context7 using an API key header.
+
+```yaml
+mcp_servers:
+  context7:
+    url: "https://mcp.context7.com/mcp"
+    headers:
+      CONTEXT7_API_KEY: "YOUR_API_KEY"
+```
+
+--------------------------------
+
+### Restore Context7 Backup Using Kubernetes CLI
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/backup-restore.mdx
+
+Commands to scale down the Context7 StatefulSet, run a one-off restore pod with volume mounts, and then scale the StatefulSet back up.
+
+```bash
+kubectl -n context7 scale statefulset context7 --replicas=0
+```
+
+```bash
+kubectl -n context7 run context7-restore --rm -it --restart=Never \
+  --image=ghcr.io/context7/enterprise:latest \
+  --overrides='{"spec":{"imagePullSecrets":[{"name":"context7-registry"}],"containers":[{"name":"context7-restore","image":"ghcr.io/context7/enterprise:latest","command":["node","dist/enterprise/restore.mjs","/data/context7-backup-2026-06-12T02-00-00.tar.gz","--yes"],"volumeMounts":[{"name":"data","mountPath":"/data"}]}],"volumes":[{"name":"data","persistentVolumeClaim":{"claimName":"data-context7-0"}}]}}'
+```
+
+```bash
+kubectl -n context7 scale statefulset context7 --replicas=1
+```
+
+--------------------------------
+
+### Version-specific documentation queries
+
+Source: https://github.com/upstash/context7/blob/master/plugins/copilot/context7/commands/docs.md
+
+Pin documentation to a specific version by including the version number in the library ID.
+
+```shell
+/context7:docs /vercel/next.js/v15.1.8 middleware
+/context7:docs /facebook/react/v19.0.0 use hook
+```
+
+--------------------------------
+
+### Opencode Local Server Connection
+
+Source: https://github.com/upstash/context7/blob/master/packages/mcp/README.md
+
+Configuration for connecting to the Context7 MCP server locally using npx.
+
+```json
+{
+  "mcp": {
+    "context7": {
+      "type": "local",
+      "command": ["npx", "-y", "@upstash/context7-mcp", "--api-key", "YOUR_API_KEY"],
+      "enabled": true
+    }
+  }
+}
+```
+
+--------------------------------
+
+### Resolve and query documentation workflow
+
+Source: https://github.com/upstash/context7/blob/master/skills/find-docs/SKILL.md
+
+A two-step workflow to first resolve the library name to an ID, and then query the documentation using that ID.
+
+```bash
+# Step 1: Resolve library ID
+npx ctx7@latest library <name> "<query>"
+
+# Step 2: Query documentation
+npx ctx7@latest docs <libraryId> "<query>"
+```
+
+--------------------------------
+
+### AGENTS.md Configuration
+
+Source: https://github.com/upstash/context7/blob/master/docs/clients/codex.mdx
+
+Add instructions to your AGENTS.md file to define default behavior for documentation searches.
+
+```markdown
+When you need to search docs, use Context7.
+```
+
+--------------------------------
+
+### Configure Crush MCP
+
+Source: https://github.com/upstash/context7/blob/master/docs/resources/all-clients.mdx
+
+Sets up remote HTTP or local stdio Context7 server configurations for Crush.
+
+```json
+{
+  "$schema": "https://charm.land/crush.json",
+  "mcp": {
+    "context7": {
+      "type": "http",
+      "url": "https://mcp.context7.com/mcp",
+      "headers": {
+        "Authorization": "Bearer YOUR_API_KEY"
+      }
+    }
+  }
+}
+```
+
+```json
+{
+  "$schema": "https://charm.land/crush.json",
+  "mcp": {
+    "context7": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp", "--api-key", "YOUR_API_KEY"]
+    }
+  }
+}
+```
+
+--------------------------------
+
+### POST /tools/query-docs
+
+Source: https://github.com/upstash/context7/blob/master/plugins/cursor/context7/README.md
+
+Fetches relevant documentation snippets for a specified library and query, ranked by relevance.
+
+```APIDOC
+## POST /tools/query-docs
+
+### Description
+This tool retrieves documentation for a specific library, filtering and ranking snippets based on a provided query. It's designed to fetch highly relevant information directly from source repositories.
+
+### Method
+POST
+
+### Endpoint
+/tools/query-docs
+
+### Parameters
+#### Path Parameters
+(None)
+
+#### Query Parameters
+(None)
+
+#### Request Body
+- **libraryId** (string) - Required - The Context7-compatible identifier for the library (e.g., "/vercel/next.js" or "/vercel/next.js/v15.1.8" for a specific version).
+- **query** (string) - Required - The search query for documentation within the specified library (e.g., "app router middleware").
+
+### Request Example
+{
+  "libraryId": "/vercel/next.js",
+  "query": "app router middleware"
+}
+
+### Response
+#### Success Response (200)
+- **snippets** (array of object) - A list of relevant documentation snippets. Each object may contain:
+  - **text** (string) - The textual content of the documentation snippet.
+  - **code** (string) - Optional. Any associated code examples within the snippet.
+
+#### Response Example
+{
+  "snippets": [
+    {
+      "text": "Middleware in Next.js 13+ App Router allows you to run code before a request is completed. It's useful for authentication, logging, and more.",
+      "code": "export function middleware(request) {\n  // ...\n  return NextResponse.next();\n}"
+    },
+    {
+      "text": "To define middleware, create a `middleware.js` (or `.ts`) file at the root of your project or within `src/`.",
+      "code": "// pages/_middleware.js or src/middleware.ts"
+    }
+  ]
+}
+```
+
+--------------------------------
+
+### Basic Library Search with Upstash Context7 SDK
+
+Source: https://github.com/upstash/context7/blob/master/docs/sdks/ts/commands/search-library.mdx
+
+Demonstrates how to perform a simple search for libraries using a query and a library name. It returns an array of library objects containing metadata like names and descriptions.
+
+```typescript
+import { Context7 } from "@upstash/context7-sdk";
+
+const client = new Context7();
+
+const libraries = await client.searchLibrary(
+  "I need to build a UI",
+  "react"
+);
+
+console.log(`Found ${libraries.length} libraries`);
+libraries.forEach((library) => {
+  console.log(`${library.name}: ${library.description}`);
+});
+```
+
+--------------------------------
+
+### Configure Context7 for Codex
+
+Source: https://github.com/upstash/context7/blob/master/docs/clients/codex.mdx
+
+Run this command to authenticate and update your Codex configuration files.
+
+```bash
+npx ctx7 setup --codex
+```
+
+--------------------------------
+
+### Query documentation with general or version-specific IDs
+
+Source: https://github.com/upstash/context7/blob/master/skills/context7-cli/references/docs.md
+
+Query documentation using either the latest indexed library ID or a version-specific ID.
+
+```bash
+# General (latest indexed)
+ctx7 docs /vercel/next.js "How to set up app router"
+
+# Version-specific
+ctx7 docs /vercel/next.js/v14.3.0-canary.87 "How to set up app router"
+```
+
+--------------------------------
+
+### Configure repository parsing with context7.json
+
+Source: https://github.com/upstash/context7/blob/master/docs/howto/private-sources.mdx
+
+Place this configuration file in your repository root to control which folders are indexed and define project-specific rules.
+
+```json
+{
+  "$schema": "https://context7.com/schema/context7.json",
+  "projectTitle": "Your Project Name",
+  "description": "Brief description of your project",
+  "folders": ["docs", "guides"],
+  "excludeFolders": ["tests", "dist", "node_modules"],
+  "excludeFiles": ["CHANGELOG.md"],
+  "rules": ["Always validate user input", "Use TypeScript strict mode"]
+}
+```
+
+--------------------------------
+
+### Configure Context7 MCP Server via YAML
+
+Source: https://github.com/upstash/context7/blob/master/docs/resources/all-clients.mdx
+
+Add this configuration to connect the Context7 MCP server locally using npx. Replace YOUR_API_KEY with your actual Context7 API key.
+
+```yaml
+mcp_servers:
+  context7:
+    command: "npx"
+    args: ["-y", "@upstash/context7-mcp", "--api-key", "YOUR_API_KEY"]
+```
+
+--------------------------------
+
+### Add Local MCP Connection via Qwen Code CLI
+
+Source: https://github.com/upstash/context7/blob/master/docs/resources/all-clients.mdx
+
+Adds a local npx-based Context7 MCP server command via the Qwen Code CLI.
+
+```sh
+qwen mcp add context7 -- npx -y @upstash/context7-mcp --api-key YOUR_API_KEY
+```
+
+--------------------------------
+
+### Set Context7 API Key Environment Variable
+
+Source: https://github.com/upstash/context7/blob/master/docs/sdks/ts/getting-started.mdx
+
+Configure your Context7 API key as an environment variable for automatic client initialization.
+
+```bash
+CONTEXT7_API_KEY="your_api_key_here"
+```
+
+--------------------------------
+
+### Configure Local Context7 MCP Server in Cursor
+
+Source: https://github.com/upstash/context7/blob/master/docs/resources/all-clients.mdx
+
+Configures a local stdio MCP server process via npx in Cursor configuration files.
+
+```json
+{
+  "mcpServers": {
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp", "--api-key", "YOUR_API_KEY"]
+    }
+  }
+}
+```
+
+--------------------------------
+
+### Configure Context7 MCP via JSON
+
+Source: https://github.com/upstash/context7/blob/master/docs/integrations/factory-ai.mdx
+
+Add the Context7 server configuration to the project or user-level .factory/mcp.json file.
+
+```json
+{
+  "mcpServers": {
+    "context7": {
+      "type": "http",
+      "url": "https://mcp.context7.com/mcp",
+      "headers": {
+        "Authorization": "Bearer YOUR_API_KEY"
+      }
+    }
+  }
+}
+```
+
+--------------------------------
+
+### Run tests and build the project using pnpm
+
+Source: https://github.com/upstash/context7/blob/master/packages/tools-ai-sdk/README.md
+
+Standard development lifecycle commands for the Upstash Context7 AI SDK. Use these commands to verify code integrity and generate production builds.
+
+```bash
+pnpm test
+```
+
+```bash
+pnpm build
+```
+
+--------------------------------
+
+### Configure Remote Server with OAuth in Hermes (YAML)
+
+Source: https://github.com/upstash/context7/blob/master/docs/resources/all-clients.mdx
+
+Add to ~/.hermes/config.yaml to authenticate Context7 using OAuth.
+
+```yaml
+mcp_servers:
+  context7:
+    url: "https://mcp.context7.com/mcp/oauth"
+    auth: oauth
+```
+
+--------------------------------
+
+### Define Services in Docker Compose
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/deployment/scaling.mdx
+
+Configure Postgres with pgvector, three application replicas, and an Nginx load balancer.
+
+```yaml
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_USER: context7
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: context7
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U context7"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app:
+    image: ghcr.io/context7/enterprise:latest
+    depends_on:
+      postgres: { condition: service_healthy }
+    environment:
+      LICENSE_KEY: ${LICENSE_KEY}
+      DATABASE_URL: postgres://context7:${POSTGRES_PASSWORD}@postgres:5432/context7
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY}
+    deploy: { replicas: 3 }
+
+  lb:
+    image: nginx:alpine
+    depends_on: [app]
+    ports: ["3000:80"]
+    volumes: ["./nginx.conf:/etc/nginx/nginx.conf:ro"]
+
+volumes:
+  pgdata:
+
+```
+
+--------------------------------
+
+### Connect Claude AI Client to Context7 MCP
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/on-premise.mdx
+
+Use this command to add your on-premise Context7 deployment as an MCP server for the Claude AI client, pointing it to your deployment URL.
+
+```bash
+claude mcp add --scope user --transport http context7 https://context7.internal.yourcompany.com/mcp
+```
+
+--------------------------------
+
+### Authenticate with ctx7 CLI
+
+Source: https://github.com/upstash/context7/blob/master/rules/context7-cli.md
+
+Use this command to log in and increase API quota limits.
+
+```bash
+npx ctx7@latest login
+```
+
+--------------------------------
+
+### Inspecting resolveLibraryId Tool Calls and Results
+
+Source: https://github.com/upstash/context7/blob/master/docs/agentic-tools/ai-sdk/tools/resolve-library-id.mdx
+
+Demonstrates how to access and log the input parameters of `resolveLibraryId` tool calls and their corresponding outputs from the AI model.
+
+```typescript
+import { resolveLibraryId } from "@upstash/context7-tools-ai-sdk";
+import { generateText, stepCountIs } from "ai";
+import { openai } from "@ai-sdk/openai";
+
+const { toolCalls, toolResults } = await generateText({
+  model: openai("gpt-5.2"),
+  prompt: "Find the official Next.js documentation",
+  tools: {
+    resolveLibraryId: resolveLibraryId(),
+  },
+  stopWhen: stepCountIs(3),
+});
+
+// See what the model searched for
+for (const call of toolCalls) {
+  console.log("Searched for:", call.input.libraryName);
+}
+
+// See the results
+for (const result of toolResults) {
+  console.log("Found:", result.output);
+}
+```
+
+--------------------------------
+
+### Deploy APIM Resource with Azure CLI
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/enterprise-managed-auth/entra.mdx
+
+Creates a resource group and deploys the Bicep template. It uses openssl to generate a unique name for the APIM instance.
+
+```bash
+RG=rg-context7-mcp
+LOC=westeurope
+APIM=apim-context7-$(openssl rand -hex 3)
+
+az group create -n $RG -l $LOC
+az deployment group create -g $RG --template-file apim.bicep \
+  --parameters name=$APIM location=$LOC \
+    publisherEmail=you@example.com publisherName="Your Org"
+```
+
+--------------------------------
+
+### Restore Context7 Backup Locally with npm
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/backup-restore.mdx
+
+Runs the Context7 restore script locally using npm, specifying the path to the backup archive. The server must be stopped before running this command.
+
+```bash
+npm run ctx7:restore -- /path/to/context7-backup-2026-06-12T02-00-00.tar.gz
+```
+
+--------------------------------
+
+### Export Context7 API key in environment
+
+Source: https://github.com/upstash/context7/blob/master/docs/clients/opencode.mdx
+
+Sets the API key environment variable for headless environments where OAuth browser authentication is unavailable.
+
+```bash
+export CONTEXT7_API_KEY="your-api-key"
+```
+
+--------------------------------
+
+### Custom API Key Configuration for queryDocs
+
+Source: https://github.com/upstash/context7/blob/master/docs/agentic-tools/ai-sdk/tools/query-docs.mdx
+
+Initialize the queryDocs tool with a specific API key. This is required if the CONTEXT7_API_KEY environment variable is not set.
+
+```typescript
+import { queryDocs } from "@upstash/context7-tools-ai-sdk";
+
+const tool = queryDocs({
+  apiKey: process.env.CONTEXT7_API_KEY,
+});
+```
+
+--------------------------------
+
+### Configure Local Context7 MCP Server in Opencode
+
+Source: https://github.com/upstash/context7/blob/master/docs/resources/all-clients.mdx
+
+Adds a local stdio MCP server process command in the Opencode configuration file.
+
+```json
+{
+  "mcp": {
+    "context7": {
+      "type": "local",
+      "command": ["npx", "-y", "@upstash/context7-mcp", "--api-key", "YOUR_API_KEY"],
+      "enabled": true
+    }
+  }
+}
+```
+
+--------------------------------
+
+### Configure Remote Server in Gemini CLI (JSON)
+
+Source: https://github.com/upstash/context7/blob/master/docs/resources/all-clients.mdx
+
+Add to ~/.gemini/settings.json to connect Gemini CLI to Context7 remotely using HTTP streaming headers.
+
+```json
+{
+  "mcpServers": {
+    "context7": {
+      "httpUrl": "https://mcp.context7.com/mcp",
+      "headers": {
+        "Authorization": "Bearer YOUR_API_KEY",
+        "Accept": "application/json, text/event-stream"
+      }
+    }
+  }
+}
+```
+
+--------------------------------
+
+### getContext
+
+Source: https://github.com/upstash/context7/blob/master/docs/sdks/ts/commands/get-context.mdx
+
+Retrieve documentation context for a specific library. Returns documentation as a JSON array of documentation snippets (default) or as plain text.
+
+```APIDOC
+## SDK Method: getContext
+
+### Description
+Retrieve documentation context for a specific library. Returns documentation as a JSON array of documentation snippets (default) or as plain text.
+
+### Method Signature
+`getContext(query: string, libraryId: string, options?: GetContextOptions): Promise<Documentation[] | string>`
+
+### Parameters
+- **query** (string) - Required - The user's question or task (used for relevance ranking)
+- **libraryId** (string) - Required - The library ID (e.g., `/facebook/react`)
+- **options** (object) - Optional - Options for retrieving context.
+    - **type** ('json' | 'txt') - Optional - Format of the response.
+        - `json`: Array of Documentation objects (default)
+        - `txt`: Plain text format
+        Default: `"json"`
+
+### Request Example
+```typescript
+import { Context7 } from "@upstash/context7-sdk";
+
+const client = new Context7();
+
+// JSON Format (Default)
+const docs = await client.getContext(
+  "How do I use hooks?",
+  "/facebook/react"
+);
+
+// Text Format
+const context = await client.getContext(
+  "How do I use hooks?",
+  "/facebook/react",
+  { type: "txt" }
+);
+
+// Error Handling
+try {
+  const context = await client.getContext(
+    "How to get started?",
+    "/invalid/library"
+  );
+} catch (error) {
+  if (error instanceof Context7Error) {
+    console.error("API Error:", error.message);
+  } else {
+    throw error;
+  }
+}
+```
+
+### Response
+The response type depends on the `type` option.
+
+#### JSON Format (`type: "json"` or default)
+Returns an array of `Documentation` objects.
+- **Documentation** (object)
+    - **title** (string) - Title of the documentation snippet
+    - **content** (string) - The documentation content (includes code blocks in markdown format)
+    - **source** (string) - Source identifier for the snippet
+
+#### Text Format (`type: "txt"`)
+Returns a `string` containing the documentation context ready to use in LLM prompts.
+
+#### Response Example (JSON Format)
+```json
+[
+  {
+    "title": "Introduction to React Hooks",
+    "content": "Hooks are functions that let you \u201chook into\u201d React state and lifecycle features from function components. Hooks don't work inside classes \u2014 they let you use React without classes.",
+    "source": "react-docs/hooks/intro"
+  },
+  {
+    "title": "Using the useEffect Hook",
+    "content": "The `useEffect` Hook lets you perform side effects in function components. Data fetching, setting up a subscription, and manually changing the DOM in React components are all examples of side effects.",
+    "source": "react-docs/hooks/use-effect"
+  }
+]
+```
+
+#### Response Example (Text Format)
+```text
+Here is the relevant documentation:
+
+Title: Introduction to React Hooks
+Content: Hooks are functions that let you \u201chook into\u201d React state and lifecycle features from function components. Hooks don't work inside classes \u2014 they let you use React without classes.
+Source: react-docs/hooks/intro
+
+Title: Using the useEffect Hook
+Content: The `useEffect` Hook lets you perform side effects in function components. Data fetching, setting up a subscription, and manually changing the DOM in React components are all examples of side effects.
+Source: react-docs/hooks/use-effect
+
+User question: How do I use useEffect?
+```
+```
+
+--------------------------------
+
+### Manual Documentation Lookup Command Syntax
+
+Source: https://github.com/upstash/context7/blob/master/docs/clients/pi.mdx
+
+Syntax for the `/c7-docs` slash command to perform a manual documentation lookup for a specified library and question.
+
+```cli
+/c7-docs <library> <question>
+```
+
+--------------------------------
+
+### Build Docker Image Command
+
+Source: https://github.com/upstash/context7/blob/master/packages/mcp/README.md
+
+Command to build the Docker image from the Dockerfile.
+
+```bash
+docker build -t context7-mcp .
+```
+
+--------------------------------
+
+### Initiate Manual Backup via cURL API
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/backup-restore.mdx
+
+Use this cURL command to trigger a manual backup of your Context7 Enterprise instance. Requires an active admin session cookie for authentication.
+
+```bash
+curl -X POST http://localhost:3000/api/backup \
+  -H "Cookie: <admin session>"
+```
+
+--------------------------------
+
+### queryDocs(config?: Context7ToolsConfig)
+
+Source: https://github.com/upstash/context7/blob/master/docs/agentic-tools/ai-sdk/tools/query-docs.mdx
+
+Initializes the queryDocs tool for use with the AI SDK to fetch documentation content.
+
+```APIDOC
+## queryDocs(config?)
+
+### Description
+Initializes the queryDocs tool which fetches up-to-date documentation for a specific library using its Context7-compatible library ID and a query.
+
+### Parameters
+#### Configuration (config)
+- **apiKey** (string) - Optional - Context7 API key. If not provided, uses the `CONTEXT7_API_KEY` environment variable.
+
+### Returns
+- **tool** (AI SDK Tool) - Returns an AI SDK tool compatible with `generateText`, `streamText`, or agents.
+```
+
+--------------------------------
+
+### Using resolveLibraryId with generateText
+
+Source: https://github.com/upstash/context7/blob/master/docs/agentic-tools/ai-sdk/tools/resolve-library-id.mdx
+
+Demonstrates how to integrate `resolveLibraryId` into an AI SDK `generateText` call to find documentation for React hooks.
+
+```typescript
+import { resolveLibraryId } from "@upstash/context7-tools-ai-sdk";
+import { generateText, stepCountIs } from "ai";
+import { openai } from "@ai-sdk/openai";
+
+const { text } = await generateText({
+  model: openai("gpt-5.2"),
+  prompt: "Find documentation for React hooks",
+  tools: {
+    resolveLibraryId: resolveLibraryId(),
+  },
+  stopWhen: stepCountIs(3),
+});
+```
+
+--------------------------------
+
+### get-library-docs
+
+Source: https://github.com/upstash/context7/blob/master/packages/mcp/README.md
+
+Fetches documentation for a library using a Context7-compatible library ID.
+
+```APIDOC
+## get-library-docs
+
+### Description
+Fetches documentation for a library using a Context7-compatible library ID.
+
+### Parameters
+- **context7CompatibleLibraryID** (string) - Required - Exact Context7-compatible library ID (e.g., /mongodb/docs, /vercel/next.js)
+- **topic** (string) - Optional - Focus the docs on a specific topic (e.g., "routing", "hooks")
+- **page** (integer) - Optional - Page number for pagination (1-10). Default is 1.
+```
+
+--------------------------------
+
+### AI Prompt for Automatic Widget Integration
+
+Source: https://github.com/upstash/context7/blob/master/docs/howto/chat-widget.mdx
+
+Use this prompt with AI coding assistants to automatically detect your framework and place the script tag. Replace /owner/repo with your specific library ID.
+
+```text
+Add the Context7 chat widget to my documentation site. This is a lightweight
+JavaScript widget that adds an AI-powered chat assistant to any webpage. It
+loads asynchronously and renders a floating chat button.
+
+The widget is loaded via a script tag:
+<script src="https://context7.com/widget.js" data-library="/owner/repo"></script>
+
+Detect which framework this project uses and add the widget accordingly. Place
+it in the root layout or HTML file so it loads on every page.
+
+Optional attributes: data-color (hex color, default #059669), data-position
+(bottom-right or bottom-left), data-placeholder (input placeholder text),
+data-welcome-message (initial assistant message shown when the chat opens).
+```
+
+--------------------------------
+
+### Set Context7 API key in .env.local
+
+Source: https://github.com/upstash/context7/blob/master/docs/integrations/eve.mdx
+
+Defines the Context7 API key variable for local eve agent development.
+
+```bash
+CONTEXT7_API_KEY=YOUR_API_KEY
+```
+
+--------------------------------
+
+### Query Documentation using docs-researcher Agent
+
+Source: https://github.com/upstash/context7/blob/master/plugins/copilot/context7/README.md
+
+Utilize the dedicated `docs-researcher` agent for focused documentation lookups, which helps keep your main Copilot CLI context clean.
+
+```bash
+copilot --agent docs-researcher -p "look up Supabase auth methods"
+```
+
+--------------------------------
+
+### Configure local Context7 MCP server in VS Code
+
+Source: https://github.com/upstash/context7/blob/master/docs/resources/all-clients.mdx
+
+Configures a stdio-based local MCP server via npx in .vscode/mcp.json.
+
+```json
+{
+  "servers": {
+    "context7": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp", "--api-key", "YOUR_API_KEY"]
+    }
+  }
+}
+```
+
+--------------------------------
+
+### Configure Context7 in Perplexity Desktop
+
+Source: https://github.com/upstash/context7/blob/master/docs/resources/all-clients.mdx
+
+Connector configuration payload for Perplexity Desktop advanced settings.
+
+```json
+{
+  "args": ["-y", "@upstash/context7-mcp", "--api-key", "YOUR_API_KEY"],
+  "command": "npx",
+  "env": {}
+}
+```
+
+--------------------------------
+
+### Authenticate Context7 CLI
+
+Source: https://github.com/upstash/context7/blob/master/skills/context7-cli/references/docs.md
+
+Use an environment variable or the login command to authenticate and increase rate limits.
+
+```bash
+# Option A: environment variable
+export CONTEXT7_API_KEY=your_key
+
+# Option B: OAuth login
+ctx7 login
+```
+
+--------------------------------
+
+### ctx7 library
+
+Source: https://github.com/upstash/context7/blob/master/skills/context7-cli/references/docs.md
+
+Resolves a package or product name to a Context7-compatible library ID and returns matching libraries.
+
+```APIDOC
+## ctx7 library <library_name> <query>
+
+### Description
+Resolves a package/product name to a Context7-compatible library ID and returns matching libraries.
+
+### Usage
+```bash
+ctx7 library <library_name> <query> [options]
+```
+
+### Arguments
+- **library_name** (string) - Required - The name of the library or package to resolve (e.g., react, nextjs, prisma).
+- **query** (string) - Required - A query representing the user's intent to help rank and disambiguate results. Do not include sensitive information.
+
+### Options
+- **--json** - Optional - Output the results as JSON for scripting.
+
+### Example
+```bash
+ctx7 library react "How to clean up useEffect with async operations"
+```
+```
+
+--------------------------------
+
+### Export library from Context7 Cloud via API
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/library-import.mdx
+
+Requires an enterprise license key in the Authorization header. Only public libraries can be exported.
+
+```bash
+curl -X POST https://context7.com/api/v1/enterprise/export \
+  -H "Authorization: Bearer YOUR_LICENSE_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"library":"vercel/next.js"}'
+```
+
+--------------------------------
+
+### Apply Kubernetes Configurations using kubectl
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/deployment/scaling.mdx
+
+Apply the secret and deployment configurations to your Kubernetes cluster.
+
+```bash
+kubectl apply -f secret.yaml
+kubectl apply -f deployment.yaml
+```
+
+--------------------------------
+
+### context7_query-docs
+
+Source: https://github.com/upstash/context7/blob/master/packages/opencode/README.md
+
+Fetches documentation for a specific library, ranked by relevance to your question.
+
+```APIDOC
+## context7_query-docs
+
+### Description
+Fetches documentation for a specific library, ranked by relevance to your question.
+
+### Parameters
+- **libraryId** (string) - Context7-compatible identifier for the library, optionally including a version tag (e.g., "/vercel/next.js" or "/vercel/next.js/v15.1.8").
+- **query** (string) - The documentation question or search query.
+
+### Input Example
+```json
+{
+  "libraryId": "/vercel/next.js",
+  "query": "app router middleware"
+}
+```
+
+### Output
+Relevant documentation snippets with code examples.
+```
+
+--------------------------------
+
+### Verify Deployment Status
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/deployment/kubernetes.mdx
+
+Check the status of the pods and inspect logs to ensure the application is running correctly.
+
+```bash
+kubectl get pods -n context7
+kubectl logs -n context7 context7-0
+```
+
+--------------------------------
+
+### Migrate SQLite and LanceDB data to PostgreSQL using Kubernetes
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/deployment/scaling.mdx
+
+Run the migration as a Kubernetes Job that mounts the existing persistent volume. Apply the manifest and monitor the logs to verify the migration status.
+
+```yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: context7-migrate
+  namespace: context7
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      imagePullSecrets:
+        - name: context7-registry
+      containers:
+        - name: migrate
+          image: ghcr.io/context7/enterprise:latest
+          command: ["node", "dist/enterprise/migrate.mjs"]
+          env:
+            - name: DATA_DIR
+              value: /data
+            - name: DATABASE_URL
+              value: postgres://user:pass@host:5432/context7
+          volumeMounts:
+            - name: data
+              mountPath: /data
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: data-context7-0
+```
+
+```bash
+kubectl apply -f migrate-job.yaml
+kubectl logs -n context7 job/context7-migrate
+```
+
+--------------------------------
+
+### Resolve library names using Context7 CLI
+
+Source: https://github.com/upstash/context7/blob/master/skills/context7-cli/references/docs.md
+
+Use ctx7 library with a query to resolve a package name to a Context7-compatible library ID.
+
+```bash
+ctx7 library react "How to clean up useEffect with async operations"
+ctx7 library nextjs "How to set up app router with middleware"
+ctx7 library prisma "How to define one-to-many relations with cascade delete"
+```
+
+--------------------------------
+
+### Authenticate with Container Registry
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/deployment/docker.mdx
+
+Use your license key to retrieve a registry token and authenticate with ghcr.io.
+
+```bash
+LICENSE_KEY="<your-license-key>"
+
+TOKEN=$(curl -s -H "Authorization: Bearer $LICENSE_KEY" \
+  https://context7.com/api/v1/license/registry-token | jq -r '.token')
+
+docker login ghcr.io -u x-access-token -p $TOKEN
+```
+
+--------------------------------
+
+### Configure plugin API key in opencode.json
+
+Source: https://github.com/upstash/context7/blob/master/docs/clients/opencode.mdx
+
+Passes the Context7 API key directly through plugin configuration options.
+
+```json
+{
+  "$schema": "https://opencode.ai/config.json",
+  "plugin": [["@upstash/context7-opencode", { "apiKey": "your-api-key" }]]
+}
+```
+
+--------------------------------
+
+### Run Context7 Command in Augment Code UI (Shell)
+
+Source: https://github.com/upstash/context7/blob/master/docs/resources/all-clients.mdx
+
+Enter this command when creating a new Context7 server entry in the Augment Code settings UI.
+
+```text
+npx -y @upstash/context7-mcp@latest
+```
+
+--------------------------------
+
+### Authenticate Context7 plugin in OpenCode
+
+Source: https://github.com/upstash/context7/blob/master/docs/clients/opencode.mdx
+
+Initiates the OAuth flow in your browser to link your account and apply rate limits.
+
+```bash
+opencode mcp auth context7
+```
+
+--------------------------------
+
+### Configure Coding Agent Rule
+
+Source: https://github.com/upstash/context7/blob/master/README.md
+
+Add this rule to your coding agent's configuration file to automate Context7 usage for library-related tasks.
+
+```txt
+Always use Context7 when I need library/API documentation, code generation, setup or configuration steps without me having to explicitly ask.
+```
+
+--------------------------------
+
+### POST /parse
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/api/parse/parse-a-git-repository.mdx
+
+Queue a GitHub or GitLab repository for parsing and indexing
+
+```APIDOC
+## POST /parse
+
+### Description
+Queue a GitHub or GitLab repository for parsing and indexing
+
+### Method
+POST
+
+### Endpoint
+/parse
+```
+
+--------------------------------
+
+### Fetch Documentation via Cursor Prompts
+
+Source: https://github.com/upstash/context7/blob/master/docs/clients/cursor.mdx
+
+Use these prompt patterns to manually trigger Context7 for specific libraries or features. You can use natural language or provide a direct library ID path to skip the resolution step.
+
+```text
+use context7 to show me how to set up middleware in Next.js 15
+use context7 for Prisma query examples with relations
+use context7 for the Supabase syntax for row-level security
+
+use context7 with /supabase/supabase for authentication docs
+use context7 with /vercel/next.js for app router setup
+```
+
+--------------------------------
+
+### Integrate Context into LLM Prompts (TypeScript)
+
+Source: https://github.com/upstash/context7/blob/master/docs/sdks/ts/commands/get-context.mdx
+
+This function shows how to fetch documentation context and embed it directly into a prompt for a Large Language Model, providing relevant information alongside the user's question.
+
+```typescript
+import { Context7 } from "@upstash/context7-sdk";
+
+const client = new Context7();
+
+async function getDocsForPrompt(library: string, question: string) {
+  const context = await client.getContext(question, library);
+
+  return `
+Here is the relevant documentation:
+
+${context}
+
+User question: ${question}
+`;
+}
+
+const prompt = await getDocsForPrompt("/facebook/react", "How do I use useEffect?");
+```
+
+--------------------------------
+
+### AI SDK Chatbot with Context7 Documentation Lookup
+
+Source: https://github.com/upstash/context7/blob/master/docs/agentic-tools/overview.mdx
+
+Integrate Context7 tools (`resolveLibraryId`, `queryDocs`) into an AI SDK `generateText` call. This enables chatbots to fetch real-time documentation for accurate, version-specific answers to framework questions.
+
+```typescript
+import { generateText, stepCountIs } from "ai";
+import { openai } from "@ai-sdk/openai";
+import { resolveLibraryId, queryDocs } from "@upstash/context7-tools-ai-sdk";
+
+const { text } = await generateText({
+  model: openai("gpt-5.2"),
+  prompt: "How do I set up authentication in Next.js 15?",
+  tools: {
+    resolveLibraryId: resolveLibraryId(),
+    queryDocs: queryDocs(),
+  },
+  stopWhen: stepCountIs(5),
+});
+```
+
+--------------------------------
+
+### Verify eve agent connection compilation
+
+Source: https://github.com/upstash/context7/blob/master/docs/integrations/eve.mdx
+
+Inspects the eve agent configuration to ensure compilation completes without errors or warnings.
+
+```bash
+npx eve info
+```
+
+--------------------------------
+
+### Failed Tool Output Format
+
+Source: https://github.com/upstash/context7/blob/master/docs/agentic-tools/ai-sdk/tools/resolve-library-id.mdx
+
+Shows the plain text message returned by `resolveLibraryId` when no libraries match the search query.
+
+```text
+No libraries found matching "unknown-lib". Try a different search term or check the library name.
+```
+
+--------------------------------
+
+### Configure MCP Server for Local Context7 Development
+
+Source: https://github.com/upstash/context7/blob/master/docs/resources/developer.mdx
+
+JSON configuration for an MCP server to run Context7 from source using `tsx` for local development.
+
+```json
+{
+  "mcpServers": {
+    "context7": {
+      "command": "npx",
+      "args": ["tsx", "/path/to/folder/context7/packages/mcp/src/index.ts", "--api-key", "YOUR_API_KEY"]
+    }
+  }
+}
+```
+
+--------------------------------
+
+### Configure Context7 MCP in Zed
+
+Source: https://github.com/upstash/context7/blob/master/docs/resources/all-clients.mdx
+
+Defines Context7 as a custom context server in Zed's settings.json using npx.
+
+```json
+{
+  "context_servers": {
+    "Context7": {
+      "source": "custom",
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp", "--api-key", "YOUR_API_KEY"]
+    }
+  }
+}
+```
+
+--------------------------------
+
+### Verify Discovery Surface and Unauthorized Access via Bash
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/enterprise-managed-auth/entra.mdx
+
+Use these commands to verify that metadata endpoints return JSON and that unauthorized requests are correctly challenged with a 401 status.
+
+```bash
+curl -s "https://<your-apim-host>/.well-known/oauth-protected-resource"
+curl -s "https://<your-apim-host>/.well-known/oauth-authorization-server"
+
+curl -i -o /dev/null -w "%{http_code} -> %{redirect_url}\n" \
+  "https://<your-apim-host>/authorize?client_id=<gateway-app-id>&response_type=code&redirect_uri=http%3A%2F%2F127.0.0.1%2F&code_challenge=abc&code_challenge_method=S256&scope=api%3A%2F%2F<gateway-app-id>%2FMcp.Gateway.Access&state=x"
+
+curl -i -X POST "https://<your-apim-host>/context7/mcp" -d '{}' -H "Content-Type: application/json" 2>&1 | head -10
+```
+
+--------------------------------
+
+### Successful Tool Output Format
+
+Source: https://github.com/upstash/context7/blob/master/docs/agentic-tools/ai-sdk/tools/resolve-library-id.mdx
+
+Illustrates the plain text format returned by `resolveLibraryId` when libraries are successfully found, including ID, title, description, and other metadata.
+
+```text
+- Title: React Documentation
+- Context7-compatible library ID: /reactjs/react.dev
+- Description: The library for web and native user interfaces
+- Code Snippets: 1250
+- Source Reputation: High
+- Benchmark Score: 98
+- Versions: 19.0.0, 18.3.1, 18.2.0
+----------
+- Title: React Native
+- Context7-compatible library ID: /facebook/react-native
+- Description: A framework for building native applications using React
+- Code Snippets: 890
+- Source Reputation: High
+- Benchmark Score: 95
+- Versions: 0.76.0, 0.75.4
+```
+
+--------------------------------
+
+### Configure Dockerized MCP Server
+
+Source: https://github.com/upstash/context7/blob/master/packages/mcp/README.md
+
+Various configurations for running the Context7 MCP server within a Docker container using stdio transport.
+
+```json
+{
+  "mcpServers": {
+    "Сontext7": {
+      "autoApprove": [],
+      "disabled": false,
+      "timeout": 60,
+      "command": "docker",
+      "args": ["run", "-i", "--rm", "context7-mcp"],
+      "transportType": "stdio"
+    }
+  }
+}
+```
+
+```json
+{
+  "mcpServers": {
+    "context7": {
+      "command": "docker",
+      "args": ["run", "-i", "--rm", "-e", "MCP_TRANSPORT=stdio", "mcp/context7"]
+    }
+  }
+}
+```
+
+```json
+{
+  "servers": {
+    "context7": {
+      "type": "stdio",
+      "command": "docker",
+      "args": ["run", "-i", "--rm", "-e", "MCP_TRANSPORT=stdio", "mcp/context7"]
+    }
+  }
+}
+```
+
+--------------------------------
+
+### Configure Nginx Load Balancer
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/deployment/scaling.mdx
+
+Set up Nginx to round-robin incoming requests across the application replicas.
+
+```nginx
+events {}
+http {
+  resolver 127.0.0.11 valid=10s ipv6=off;
+  server {
+    listen 80;
+    location / {
+      set $backend http://app:3000;
+      proxy_pass $backend;
+      proxy_http_version 1.1;
+      proxy_set_header Host $host;
+      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+      proxy_set_header X-Forwarded-Proto $scheme;
+    }
+  }
+}
+
+```
+
+--------------------------------
+
+### Configure Context7 in Qodo Gen
+
+Source: https://github.com/upstash/context7/blob/master/docs/resources/all-clients.mdx
+
+Local and remote MCP server configurations for Qodo Gen chat panel.
+
+```json
+{
+  "mcpServers": {
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp", "--api-key", "YOUR_API_KEY"]
+    }
+  }
+}
+```
+
+```json
+{
+  "mcpServers": {
+    "context7": {
+      "url": "https://mcp.context7.com/mcp"
+    }
+  }
+}
+```
+
+--------------------------------
+
+### Select Best Library by Benchmark Score using TypeScript
+
+Source: https://github.com/upstash/context7/blob/master/docs/sdks/ts/commands/search-library.mdx
+
+Shows how to search for libraries and sort the results based on their benchmark scores to find the highest quality documentation. This is useful for automated selection of the best library match.
+
+```typescript
+import { Context7 } from "@upstash/context7-sdk";
+
+const client = new Context7();
+
+const libraries = await client.searchLibrary(
+  "I want to build a web app",
+  "next"
+);
+
+const sorted = libraries.sort((a, b) => b.benchmarkScore - a.benchmarkScore);
+const best = sorted[0];
+
+console.log(`Best match: ${best.name} (score: ${best.benchmarkScore})`);
+console.log(`Available snippets: ${best.totalSnippets}`);
+```
+
+--------------------------------
+
+### Configure Visual Studio 2022
+
+Source: https://github.com/upstash/context7/blob/master/docs/resources/all-clients.mdx
+
+Configures remote HTTP endpoint or local stdio server integration in Visual Studio 2022.
+
+```json
+{
+  "inputs": [],
+  "servers": {
+    "context7": {
+      "type": "http",
+      "url": "https://mcp.context7.com/mcp",
+      "headers": {
+        "Authorization": "Bearer YOUR_API_KEY"
+      }
+    }
+  }
+}
+```
+
+```json
+{
+  "servers": {
+    "context7": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp", "--api-key", "YOUR_API_KEY"]
+    }
+  }
+}
+```
+
+--------------------------------
+
+### Add Context7 via Codex CLI
+
+Source: https://github.com/upstash/context7/blob/master/docs/clients/codex.mdx
+
+Use this command to register the Context7 MCP server directly from your terminal.
+
+```bash
+codex mcp add context7 -- npx -y @upstash/context7-mcp --api-key YOUR_API_KEY
+```
+
+--------------------------------
+
+### Connect Tools to Agent
+
+Source: https://github.com/upstash/context7/blob/master/docs/integrations/mastra.mdx
+
+Integrate Context7 tools into a Mastra agent instance.
+
+```typescript
+import { Agent } from "@mastra/core/agent";
+
+const agent = new Agent({
+  id: "coding-assistant",
+  name: "Coding Assistant",
+  instructions: "You are a helpful coding assistant with access to up-to-date library documentation via Context7.",
+  model: "anthropic/claude-sonnet-4-6",
+  tools: await context7.listTools(),
+});
+```
+
+--------------------------------
+
+### Configure Context7 Remote MCP in AnythingLLM
+
+Source: https://github.com/upstash/context7/blob/master/docs/resources/all-clients.mdx
+
+MCP configuration for connecting AnythingLLM to the remote Context7 streamable endpoint.
+
+```json
+{
+"mcpServers": {
+  "context7": {
+    "type": "streamable",
+    "url": "https://mcp.context7.com/mcp",
+    "headers": { 
+		  "Authorization": "Bearer YOUR_API_KEY"
+		}	
+	}
+}
+}
+```
+
+--------------------------------
+
+### Configuring resolveLibraryId with a Custom API Key
+
+Source: https://github.com/upstash/context7/blob/master/docs/agentic-tools/ai-sdk/tools/resolve-library-id.mdx
+
+Shows how to pass a custom `apiKey` to the `resolveLibraryId` tool configuration, overriding the environment variable.
+
+```typescript
+import { resolveLibraryId } from "@upstash/context7-tools-ai-sdk";
+
+const tool = resolveLibraryId({
+  apiKey: process.env.CONTEXT7_API_KEY,
+});
+```
+
+--------------------------------
+
+### Create API and MCP operation using Azure CLI
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/enterprise-managed-auth/entra.mdx
+
+Initialize the API endpoint and define the POST operation for the MCP service within the APIM instance.
+
+```bash
+az apim api create -g $RG --service-name $APIM \
+  --api-id context7-mcp \
+  --display-name "Context7 MCP" \
+  --path context7 \
+  --service-url https://mcp.context7.com \
+  --protocols https \
+  --subscription-required false
+
+az apim api operation create -g $RG --service-name $APIM \
+  --api-id context7-mcp \
+  --operation-id post-mcp \
+  --display-name "MCP" \
+  --method POST \
+  --url-template "/mcp"
+```
+
+--------------------------------
+
+### Using `docs-researcher` Agent for Focused Documentation Lookups
+
+Source: https://github.com/upstash/context7/blob/master/docs/clients/copilot-cli.mdx
+
+Invoke the `docs-researcher` agent to perform documentation lookups in a separate context, avoiding context bloat during long tasks.
+
+```bash
+copilot --agent docs-researcher -p "how do I set up Prisma with PostgreSQL?"
+```
+
+--------------------------------
+
+### context7.json
+
+Source: https://github.com/upstash/context7/blob/master/docs/library-owners.mdx
+
+The primary configuration file for defining how Context7 indexes a repository, including metadata, folder filtering, and version management.
+
+```APIDOC
+## context7.json\n\n### Description\nThe `context7.json` file is used by library owners to configure how Context7 parses their repository. It defines metadata, inclusion/exclusion rules, and versioning information.\n\n### Parameters\n#### Configuration Fields\n- **projectTitle** (string) - Optional - Suggested display name for the project in Context7.\n- **description** (string) - Optional - Suggested description for the project in Context7.\n- **branch** (string) - Optional - The name of the git branch to parse. Defaults to the repository's default branch.\n- **folders** (array) - Optional - Specific folder paths to include when parsing. If empty, the entire repository is scanned.\n- **excludeFolders** (array) - Optional - Patterns to exclude from documentation parsing. Supports simple names, paths, and glob patterns.\n- **excludeFiles** (array) - Optional - Specific file names to exclude (e.g., `CHANGELOG.md`).\n- **rules** (array) - Optional - Best practices or guidelines for coding agents to follow when using the library.\n- **previousVersions** (array) - Optional - Information about previous tag-based versions.\n  - **tag** (string) - The Git tag or version identifier.\n- **branchVersions** (array) - Optional - Information about previous branch-based versions.\n  - **branch** (string) - The Git branch name.\n\n### Inclusion Logic\n`excludeFolders` always takes priority over `folders`. A file is included only if it does not match an exclusion pattern and (if `folders` is non-empty) it resides within a listed folder.\n\n### Request Example\n{\n  "folders": [\n    "docs",\n    "api-reference"\n  ],\n  "excludeFolders": [\n    "docs/archive",\n    "**/old"\n  ],\n  "rules": [\n    "Follow PSR-12 coding standards"\n  ]\n}
+```
+
+--------------------------------
+
+### Run Context7 Docker container with mounted SSH keys
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/integrations/other-git.mdx
+
+Mounts the private key and known_hosts files as read-only volumes in Docker and sets `GIT_SSH_COMMAND`. Used when no SSH key is configured directly in the UI.
+
+```bash
+docker run -d -p 3000:3000 -v context7-data:/data \
+  -v /path/to/id_ed25519:/etc/git-ssh/id_ed25519:ro \
+  -v /path/to/known_hosts:/etc/git-ssh/known_hosts:ro \
+  -e GIT_SSH_COMMAND="ssh -i /etc/git-ssh/id_ed25519 -o UserKnownHostsFile=/etc/git-ssh/known_hosts" \
+  -e LLM_API_KEY=sk-... \
+  ghcr.io/context7/enterprise
+```
+
+--------------------------------
+
+### Migrate SQLite and LanceDB data to PostgreSQL using Docker
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/deployment/scaling.mdx
+
+Run the migration command as a one-shot Docker container. Ensure you mount the existing data volume to access SQLite and LanceDB files.
+
+```bash
+docker run --rm \
+  -v context7-data:/data \
+  -e DATA_DIR=/data \
+  -e DATABASE_URL="postgres://user:pass@host:5432/context7" \
+  ghcr.io/context7/enterprise:latest \
+  node dist/enterprise/migrate.mjs
+```
+
+--------------------------------
+
+### Configure Context7 with context7.json
+
+Source: https://github.com/upstash/context7/blob/master/docs/library-owners.mdx
+
+Place this file in your repository root to control project metadata, folder exclusion, and documentation rules. The $schema field provides autocomplete and validation in editors like VS Code.
+
+```json
+{
+  "$schema": "https://context7.com/schema/context7.json",
+  "projectTitle": "Upstash Ratelimit",
+  "description": "Ratelimiting library based on Upstash Redis",
+  "folders": [],
+  "excludeFolders": ["src"],
+  "excludeFiles": [],
+  "rules": ["Use Upstash Redis as a database", "Use single region set up"],
+  "previousVersions": [
+    {
+      "tag": "v1.2.1"
+    }
+  ]
+}
+```
+
+--------------------------------
+
+### Create OAuth Proxy API and Operations using Azure CLI
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/enterprise-managed-auth/entra.mdx
+
+Initializes a root-level API in APIM to host OAuth discovery and bridge endpoints. Ensure the service URL points to your Entra tenant's OAuth 2.0 endpoint.
+
+```bash
+az apim api create -g $RG --service-name $APIM \
+  --api-id oauth-proxy \
+  --display-name "OAuth Proxy" \
+  --path "" \
+  --service-url "https://login.microsoftonline.com/<your-tenant-id>/oauth2/v2.0" \
+  --protocols https \
+  --subscription-required false
+
+for op in prm-metadata as-metadata authorize token; do
+  case $op in
+    prm-metadata) path="/.well-known/oauth-protected-resource"; method=GET ;;
+    as-metadata)  path="/.well-known/oauth-authorization-server"; method=GET ;;
+    authorize)    path="/authorize"; method=GET ;;
+    token)        path="/token"; method=POST ;;
+  esac
+  az apim api operation create -g $RG --service-name $APIM \
+    --api-id oauth-proxy --operation-id $op \
+    --display-name "$op" --method $method --url-template "$path"
+done
+```
+
+--------------------------------
+
+### Configure Rovo Dev CLI
+
+Source: https://github.com/upstash/context7/blob/master/packages/mcp/README.md
+
+Commands and configuration for Rovo Dev CLI integration.
+
+```bash
+acli rovodev mcp
+```
+
+```json
+{
+  "mcpServers": {
+    "context7": {
+      "url": "https://mcp.context7.com/mcp"
+    }
+  }
+}
+```
+
+```json
+{
+  "mcpServers": {
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp", "--api-key", "YOUR_API_KEY"]
+    }
+  }
+}
+```
+
+--------------------------------
+
+### POST agent.stream()
+
+Source: https://github.com/upstash/context7/blob/master/docs/agentic-tools/ai-sdk/agents/context7-agent.mdx
+
+Execute a streaming documentation lookup query. Returns an async iterable of text chunks for real-time response streaming.
+
+```APIDOC
+## POST agent.stream()
+
+### Description
+Executes a streaming documentation lookup workflow. Returns text chunks as they are generated, enabling real-time response display.
+
+### Method
+POST
+
+### Endpoint
+agent.stream()
+
+### Parameters
+
+#### Request Body
+- **prompt** (string) - Required - User query for documentation lookup
+
+### Request Example
+```typescript
+const { textStream } = await agent.stream({
+  prompt: "How do I create a Supabase Edge Function?"
+});
+
+for await (const chunk of textStream) {
+  process.stdout.write(chunk);
+}
+```
+
+### Response
+
+#### Success Response
+- **textStream** (AsyncIterable<string>) - Async iterable yielding text chunks as they are generated
+
+#### Response Example
+```typescript
+// Streams chunks like:
+// "To create a Supabase Edge Function, "
+// "you need to use the Supabase CLI..."
+// "Here's an example:"
+```
+```
+
+--------------------------------
+
+### Configure Qodo Gen MCP
+
+Source: https://github.com/upstash/context7/blob/master/packages/mcp/README.md
+
+JSON configuration for Qodo Gen local and remote server connections.
+
+```json
+{
+  "mcpServers": {
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp", "--api-key", "YOUR_API_KEY"]
+    }
+  }
+}
+```
+
+```json
+{
+  "mcpServers": {
+    "context7": {
+      "url": "https://mcp.context7.com/mcp"
+    }
+  }
+}
+```
+
+--------------------------------
+
+### Authenticate and manage login status with Context7 CLI
+
+Source: https://github.com/upstash/context7/blob/master/skills/context7-cli/SKILL.md
+
+Commands to log in, log out, and check the current authentication status for the Context7 CLI, supporting both browser-based and headless login.
+
+```bash
+ctx7 login               # Opens browser for OAuth
+ctx7 login --no-browser  # Prints URL instead of opening browser
+ctx7 logout              # Clear stored tokens
+ctx7 whoami              # Show current login status (name + email)
+```
+
+--------------------------------
+
+### Configure Factory Remote Server
+
+Source: https://github.com/upstash/context7/blob/master/packages/mcp/README.md
+
+CLI commands for adding a remote MCP server to Factory.
+
+```sh
+droid mcp add context7 https://mcp.context7.com/mcp --type http --header "Authorization: Bearer YOUR_API_KEY"
+```
+
+```sh
+droid mcp add context7 https://mcp.context7.com/mcp --type http
+```
+
+--------------------------------
+
+### Configure Opencode MCP for Context7
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/on-premise.mdx
+
+Integrate this JSON snippet into your Opencode configuration to enable and connect to your remote Context7 MCP server.
+
+```json
+{
+  "mcp": {
+    "context7": {
+      "type": "remote",
+      "url": "https://context7.internal.yourcompany.com/mcp",
+      "enabled": true
+    }
+  }
+}
+```
+
+--------------------------------
+
+### Prompt for Next.js Middleware with Context7
+
+Source: https://github.com/upstash/context7/blob/master/docs/overview.mdx
+
+This prompt instructs an AI coding assistant to generate a Next.js middleware for JWT authentication, leveraging Context7 for up-to-date API information.
+
+```txt
+Create a Next.js middleware that checks for a valid JWT in cookies and redirects unauthenticated users to `/login`. use context7
+```
+
+--------------------------------
+
+### Configure HTTPS Proxy via Environment Variables
+
+Source: https://github.com/upstash/context7/blob/master/docs/resources/troubleshooting.mdx
+
+Set proxy environment variables for different operating systems and shells. Authentication can be included in the proxy URL.
+
+```bash
+export https_proxy=http://proxy.example.com:8080
+export HTTPS_PROXY=http://proxy.example.com:8080
+```
+
+```bash
+export https_proxy=http://username:password@proxy.example.com:8080
+```
+
+```cmd
+set https_proxy=http://proxy.example.com:8080
+set HTTPS_PROXY=http://proxy.example.com:8080
+```
+
+```cmd
+set https_proxy=http://username:password@proxy.example.com:8080
+```
+
+```powershell
+$env:https_proxy = "http://proxy.example.com:8080"
+$env:HTTPS_PROXY = "http://proxy.example.com:8080"
+```
+
+--------------------------------
+
+### Configure Context7 in Crush
+
+Source: https://github.com/upstash/context7/blob/master/packages/mcp/README.md
+
+Add the remote HTTP server configuration to your Crush configuration file.
+
+```json
+{
+  "$schema": "https://charm.land/crush.json",
+  "mcp": {
+    "context7": {
+      "type": "http",
+      "url": "https://mcp.context7.com/mcp",
+      "headers": {
+        "Authorization": "Bearer YOUR_API_KEY"
+      }
+    }
+  }
+}
+```
+
+--------------------------------
+
+### Add Context7 MCP server using OpenAI Codex CLI
+
+Source: https://github.com/upstash/context7/blob/master/docs/resources/all-clients.mdx
+
+Registers the Context7 MCP server via the Codex CLI using npx and an API key.
+
+```sh
+codex mcp add context7 -- npx -y @upstash/context7-mcp --api-key YOUR_API_KEY
+```
+
+--------------------------------
+
+### Update Service
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/deployment/docker.mdx
+
+Pull the latest image and restart the container to apply updates.
+
+```bash
+docker compose pull
+docker compose up -d
+```
+
+--------------------------------
+
+### Connect Context7 via Autohand Code
+
+Source: https://github.com/upstash/context7/blob/master/packages/mcp/README.md
+
+Commands for adding the Context7 MCP server to Autohand Code using either Stdio with an API key or a remote HTTP transport.
+
+```sh
+autohand mcp add context7 npx -y @upstash/context7-mcp --api-key YOUR_API_KEY
+```
+
+```sh
+autohand mcp add --transport http context7 https://mcp.context7.com/mcp
+```
+
+--------------------------------
+
+### Specify Library ID in Prompt
+
+Source: https://github.com/upstash/context7/blob/master/README.md
+
+Use the slash syntax to explicitly define the library ID for direct documentation retrieval.
+
+```txt
+Implement basic authentication with Supabase. use library /supabase/supabase for API and docs.
+```
+
+--------------------------------
+
+### Run Container as Non-Root
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/deployment/docker.mdx
+
+Adjust volume permissions and run the container with a specific user ID.
+
+```bash
+docker run --rm -v context7-data:/data alpine chown -R 10001:10001 /data
+
+docker run -d --name context7 \
+  --user 10001:10001 \
+  -v context7-data:/data \
+  -e LICENSE_KEY="$LICENSE_KEY" \
+  -p 3000:3000 \
+  ghcr.io/context7/enterprise:latest
+```
+
+--------------------------------
+
+### Update Context7 Deployment
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/deployment/kubernetes.mdx
+
+Commands to restart the statefulset or update the container image version.
+
+```bash
+kubectl rollout restart statefulset/context7 -n context7
+```
+
+```bash
+kubectl set image statefulset/context7 \
+  context7=ghcr.io/context7/enterprise:1.2.0 \
+  -n context7
+```
+
+--------------------------------
+
+### OpenAI Codex Server Connections
+
+Source: https://github.com/upstash/context7/blob/master/packages/mcp/README.md
+
+Configuration options for OpenAI Codex, including local, remote, and platform-specific troubleshooting paths.
+
+```toml
+[mcp_servers.context7]
+args = ["-y", "@upstash/context7-mcp", "--api-key", "YOUR_API_KEY"]
+command = "npx"
+startup_timeout_ms = 20_000
+```
+
+```toml
+[mcp_servers.context7]
+url = "https://mcp.context7.com/mcp"
+http_headers = { "Authorization" = "Bearer YOUR_API_KEY" }
+```
+
+```toml
+[mcp_servers.context7]
+command = "C:\\Users\\yourname\\AppData\\Roaming\\npm\\npx.cmd"
+args = [
+  "-y",
+  "@upstash/context7-mcp",
+  "--api-key",
+  "YOUR_API_KEY"
+]
+env = { SystemRoot="C:\\Windows", APPDATA="C:\\Users\\yourname\\AppData\\Roaming" }
+startup_timeout_ms = 40_000
+```
+
+```toml
+[mcp_servers.context7]
+command = "/Users/yourname/.nvm/versions/node/v22.14.0/bin/node"
+args = ["/Users/yourname/.nvm/versions/node/v22.14.0/lib/node_modules/@upstash/context7-mcp/dist/index.js",
+  "--transport",
+  "stdio",
+  "--api-key",
+  "YOUR_API_KEY"
+]
+```
+
+--------------------------------
+
+### query-docs
+
+Source: https://github.com/upstash/context7/blob/master/README.md
+
+Retrieves documentation for a library using a specific Context7-compatible library ID.
+
+```APIDOC
+## query-docs
+
+### Description
+Retrieves documentation for a library using a Context7-compatible library ID.
+
+### Parameters
+- **libraryId** (string) - Required - Exact Context7-compatible library ID (e.g., /mongodb/docs).
+- **query** (string) - Required - The question or task to get relevant documentation for.
+```
+
+--------------------------------
+
+### Perform Gateway Smoke Test using Azure CLI
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/enterprise-managed-auth/entra.mdx
+
+Acquire an access token via Azure CLI and perform an authorized MCP initialization request to validate the full OBO flow.
+
+```bash
+GATEWAY_APP_ID=<gateway-app-client-id>
+APIM_HOST=<your-apim-host>
+
+az login --tenant <your-tenant-id> --scope api://$GATEWAY_APP_ID/.default
+
+TOKEN=$(az account get-access-token --resource api://$GATEWAY_APP_ID --query accessToken -o tsv)
+
+curl -i -X POST "https://$APIM_HOST/context7/mcp" \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json, text/event-stream" \
+  -d '{"jsonrpc":"2.0","method":"initialize","id":1,"params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"smoke","version":"0.0.1"}}}'
+```
+
+--------------------------------
+
+### Define repository sources in repos.yaml
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/gitops.mdx
+
+The manifest file supports various source types including Git, Confluence, llms.txt, websites, and OpenAPI specifications. Defaults can be set globally to apply to all entries unless overridden.
+
+```yaml
+defaults:
+  indexSourceCode: false
+  branch: ""              # empty means the repository's default branch
+repos:
+  # Git repository (the default when type is omitted)
+  - url: https://github.com/acme/payments
+    branch: main
+    folders: [docs]
+    excludeFolders: [node_modules]
+
+  # Confluence space (uses the connection from Settings → Integrations)
+  - url: https://acme.atlassian.net/wiki
+    type: confluence
+    spaceKey: TEAM
+
+  # Confluence — specific pages by URL (may span spaces)
+  - url: https://acme.atlassian.net/wiki
+    type: confluence
+    pageUrls:
+      - https://acme.atlassian.net/wiki/spaces/TEAM/pages/1234567/Overview
+      - https://acme.atlassian.net/wiki/spaces/SDK/pages/7654321/Client+API
+    includeSubPages: true
+
+  # llms.txt index
+  - url: https://docs.acme.com/llms.txt
+    type: llmstxt
+
+  # Website crawl
+  - url: https://docs.acme.com/
+    type: website
+    maxPages: 200
+
+  # OpenAPI specification
+  - url: https://petstore3.swagger.io/api/v3/openapi.json
+    type: openapi
+```
+
+--------------------------------
+
+### Configure Cursor MCP Server for Context7
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/on-premise.mdx
+
+Add this JSON configuration to your ~/.cursor/mcp.json file to register your Context7 deployment as an MCP server for the Cursor AI client.
+
+```json
+{
+  "mcpServers": {
+    "context7": {
+      "url": "https://context7.internal.yourcompany.com/mcp"
+    }
+  }
+}
+```
+
+--------------------------------
+
+### Configure Crush Local Server
+
+Source: https://github.com/upstash/context7/blob/master/packages/mcp/README.md
+
+JSON configuration for the Crush local server environment.
+
+```json
+{
+  "$schema": "https://charm.land/crush.json",
+  "mcp": {
+    "context7": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp", "--api-key", "YOUR_API_KEY"]
+    }
+  }
+}
+```
+
+--------------------------------
+
+### Configure Warp MCP Server
+
+Source: https://github.com/upstash/context7/blob/master/docs/resources/all-clients.mdx
+
+JSON configuration for registering Context7 as an agent MCP server in Warp settings.
+
+```json
+{
+  "Context7": {
+    "command": "npx",
+    "args": ["-y", "@upstash/context7-mcp", "--api-key", "YOUR_API_KEY"],
+    "env": {},
+    "working_directory": null,
+    "start_on_launch": true
+  }
+}
+```
+
+--------------------------------
+
+### Resolve TLS/Certificate issues
+
+Source: https://github.com/upstash/context7/blob/master/docs/resources/troubleshooting.mdx
+
+Use the experimental-fetch flag to address TLS or certificate-related connectivity problems.
+
+```json
+{
+  "mcpServers": {
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "--node-options=--experimental-fetch", "@upstash/context7-mcp"]
+    }
+  }
+}
+```
+
+--------------------------------
+
+### Configure Remote Context7 MCP Server in Cursor
+
+Source: https://github.com/upstash/context7/blob/master/docs/resources/all-clients.mdx
+
+Adds Context7 remote MCP server configuration to ~/.cursor/mcp.json or project .cursor/mcp.json.
+
+```json
+{
+  "mcpServers": {
+    "context7": {
+      "url": "https://mcp.context7.com/mcp",
+      "headers": {
+        "Authorization": "Bearer YOUR_API_KEY"
+      }
+    }
+  }
+}
+```
+
+--------------------------------
+
+### Default Excluded Files List
+
+Source: https://github.com/upstash/context7/blob/master/docs/library-owners.mdx
+
+List of common non-documentation files excluded by default when excludeFiles is not specified.
+
+```text
+CHANGELOG.md, changelog.md, CHANGELOG.mdx, changelog.mdx
+LICENSE.md, license.md
+CODE_OF_CONDUCT.md, code_of_conduct.md
+```
+
+--------------------------------
+
+### Add Remote MCP Connection via Qwen Code CLI
+
+Source: https://github.com/upstash/context7/blob/master/docs/resources/all-clients.mdx
+
+Configures a remote HTTP MCP server connection with authentication headers using Qwen Code CLI.
+
+```sh
+qwen mcp add --transport http context7 https://mcp.context7.com/mcp \
+  --header "Authorization: Bearer YOUR_API_KEY" \
+  --header "Accept: application/json, text/event-stream"
+```
+
+--------------------------------
+
+### Configure remote Context7 MCP server in Google Antigravity
+
+Source: https://github.com/upstash/context7/blob/master/docs/resources/all-clients.mdx
+
+Configures a remote server connection with Authorization headers in Antigravity's MCP configuration.
+
+```json
+{
+  "mcpServers": {
+    "context7": {
+      "serverUrl": "https://mcp.context7.com/mcp",
+      "headers": {
+        "Authorization": "Bearer YOUR_API_KEY"
+      }
+    }
+  }
+}
+```
+
+--------------------------------
+
+### Apply OAuth Proxy Policies using Azure CLI
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/enterprise-managed-auth/entra.mdx
+
+Iterates through the saved XML files and uploads them to the corresponding APIM operations via the REST API. Requires jq for JSON body construction.
+
+```bash
+for op in prm-metadata as-metadata authorize; do
+  case $op in
+    prm-metadata) file=prm-policy.xml ;;
+    as-metadata) file=as-metadata-policy.xml ;;
+    authorize) file=authorize-policy.xml ;;
+  esac
+  jq -Rs '{properties: {value: ., format: "xml"}}' $file > /tmp/body.json
+  az rest --method put \
+    --uri "https://management.azure.com/subscriptions/$SUB/resourceGroups/$RG/providers/Microsoft.ApiManagement/service/$APIM/apis/oauth-proxy/operations/$op/policies/policy?api-version=2024-05-01" \
+    --body @/tmp/body.json
+done
+```
+
+--------------------------------
+
+### Configure Context7 in Zencoder
+
+Source: https://github.com/upstash/context7/blob/master/docs/resources/all-clients.mdx
+
+Custom MCP tool configuration for Zencoder agent tools.
+
+```json
+{
+  "command": "npx",
+  "args": ["-y", "@upstash/context7-mcp", "--api-key", "YOUR_API_KEY"]
+}
+```
+
+--------------------------------
+
+### Configure Docker Volumes for Local Backups
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/backup-restore.mdx
+
+Mount dedicated volumes for Context7 data and backups in Docker Compose to ensure backups persist independently of the data volume.
+
+```yaml
+services:
+  context7:
+    # ...
+    volumes:
+      - context7-data:/data
+      - context7-backups:/backups
+
+volumes:
+  context7-data:
+  context7-backups:
+```
+
+--------------------------------
+
+### Create a documentation agent using Context7Agent
+
+Source: https://github.com/upstash/context7/blob/master/packages/tools-ai-sdk/README.md
+
+The Context7Agent provides a high-level abstraction for building agents that automatically handle documentation lookups. It requires a compatible AI model and manages the tool-calling workflow internally.
+
+```typescript
+import { Context7Agent } from "@upstash/context7-tools-ai-sdk";
+import { anthropic } from "@ai-sdk/anthropic";
+
+const agent = new Context7Agent({
+  model: anthropic("claude-sonnet-4-20250514"),
+});
+
+const { text } = await agent.generate({
+  prompt: "How do I set up routing in Next.js?",
+});
+
+console.log(text);
+```
+
+--------------------------------
+
+### Check pod logs for license errors
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/deployment/kubernetes.mdx
+
+Use this command to inspect the logs of a crashing pod to identify license validation issues.
+
+```bash
+kubectl logs -n context7 context7-0
+```
+
+--------------------------------
+
+### Set Context7 API Key for Authentication
+
+Source: https://github.com/upstash/context7/blob/master/docs/clients/pi.mdx
+
+Exports the Context7 API key as an environment variable for higher quotas and private repository access.
+
+```bash
+export CONTEXT7_API_KEY=ctx7sk_...
+```
+
+--------------------------------
+
+### Configure HTTPS Proxy in MCP Settings
+
+Source: https://github.com/upstash/context7/blob/master/docs/resources/troubleshooting.mdx
+
+Add proxy environment variables directly to the MCP configuration file for the Context7 server.
+
+```json
+{
+  "mcpServers": {
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp", "--api-key", "YOUR_API_KEY"],
+      "env": {
+        "https_proxy": "http://proxy.example.com:8080",
+        "HTTPS_PROXY": "http://proxy.example.com:8080"
+      }
+    }
+  }
+}
+```
+
+--------------------------------
+
+### Environment Variable Configuration
+
+Source: https://github.com/upstash/context7/blob/master/packages/mcp/README.md
+
+Configuration for API keys using .env files and MCP server JSON definitions.
+
+```bash
+# .env
+CONTEXT7_API_KEY=your_api_key_here
+```
+
+```json
+{
+  "mcpServers": {
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp"],
+      "env": {
+        "CONTEXT7_API_KEY": "YOUR_API_KEY"
+      }
+    }
+  }
+}
+```
+
+--------------------------------
+
+### Configure API key via environment variable
+
+Source: https://github.com/upstash/context7/blob/master/docs/clients/cli.mdx
+
+Set CONTEXT7_API_KEY to bypass interactive login, suitable for CI pipelines and automated scripting.
+
+```bash
+export CONTEXT7_API_KEY=your_key
+```
+
+--------------------------------
+
+### queryDocs Configuration Signature
+
+Source: https://github.com/upstash/context7/blob/master/docs/agentic-tools/ai-sdk/tools/query-docs.mdx
+
+The function signature for initializing the queryDocs tool with optional configuration.
+
+```typescript
+queryDocs(config?: Context7ToolsConfig)
+```
+
+--------------------------------
+
+### GitHub Actions Step for Private Context7 Repository Refresh
+
+Source: https://github.com/upstash/context7/blob/master/docs/integrations/github-actions.mdx
+
+For private repositories, include a gitToken in the request body to allow Context7 access. This functionality requires a Pro or Enterprise plan.
+
+```yaml
+- name: Trigger Context7 Refresh
+  run: |
+    curl -s -X POST https://context7.com/api/v1/refresh \
+      -H "Content-Type: application/json" \
+      -H "Authorization: Bearer ${{ secrets.CONTEXT7_API_KEY }}" \
+      -d '{"libraryName": "/your-org/your-repo", "gitToken": "${{ secrets.GIT_ACCESS_TOKEN }}"}'
+```
+
+--------------------------------
+
+### Deploy APIM Policy via Azure CLI
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/enterprise-managed-auth/entra.mdx
+
+Converts a policy XML file to the required JSON format and updates the API Management policy using the Azure REST API.
+
+```bash
+SUB=$(az account show --query id -o tsv)
+
+jq -Rs '{properties: {value: ., format: "xml"}}' policy.xml > policy-body.json
+
+az rest --method put \
+  --uri "https://management.azure.com/subscriptions/$SUB/resourceGroups/$RG/providers/Microsoft.ApiManagement/service/$APIM/apis/context7-mcp/policies/policy?api-version=2024-05-01" \
+  --body @policy-body.json
+```
+
+--------------------------------
+
+### Configure remote Context7 MCP server in VS Code
+
+Source: https://github.com/upstash/context7/blob/master/docs/resources/all-clients.mdx
+
+Configures an HTTP MCP server endpoint with authentication in .vscode/mcp.json.
+
+```json
+{
+  "servers": {
+    "context7": {
+      "type": "http",
+      "url": "https://mcp.context7.com/mcp",
+      "headers": {
+        "Authorization": "Bearer YOUR_API_KEY"
+      }
+    }
+  }
+}
+```
+
+--------------------------------
+
+### Pull Enterprise Image
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/deployment/docker.mdx
+
+Manually pull the latest Context7 Enterprise image from the registry.
+
+```bash
+docker pull ghcr.io/context7/enterprise:latest
+```
+
+--------------------------------
+
+### Output library resolution results as JSON
+
+Source: https://github.com/upstash/context7/blob/master/skills/context7-cli/references/docs.md
+
+Use the --json flag and jq to parse and extract the library ID for scripting purposes.
+
+```bash
+# Output as JSON for scripting
+ctx7 library react "How to use hooks for state management" --json | jq '.[0].id'
+```
+
+--------------------------------
+
+### Defining an Auto-Invoke Rule
+
+Source: https://github.com/upstash/context7/blob/master/packages/mcp/README.md
+
+A rule configuration to automatically trigger Context7 for code-related queries in supported MCP clients.
+
+```txt
+Always use context7 when I need code generation, setup or configuration steps, or
+library/API documentation. This means you should automatically use the Context7 MCP
+tools to resolve library id and get library docs without me having to explicitly ask.
+```
+
+--------------------------------
+
+### Error Handling for Library Search in TypeScript
+
+Source: https://github.com/upstash/context7/blob/master/docs/sdks/ts/commands/search-library.mdx
+
+Illustrates how to safely perform a library search by wrapping the call in a try-catch block and checking for specific Context7Error instances. It also handles the case where no libraries are found.
+
+```typescript
+import { Context7, Context7Error } from "@upstash/context7-sdk";
+
+const client = new Context7();
+
+try {
+  const libraries = await client.searchLibrary("query", "express");
+
+  if (libraries.length === 0) {
+    console.log("No libraries found");
+  } else {
+    console.log(`Found ${libraries.length} libraries`);
+  }
+} catch (error) {
+  if (error instanceof Context7Error) {
+    console.error("API Error:", error.message);
+  } else {
+    throw error;
+  }
+}
+```
+
+--------------------------------
+
+### POST /api/gitops/reconcile
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/gitops.mdx
+
+Triggers an immediate synchronization of repositories.
+
+```APIDOC
+## POST /api/gitops/reconcile
+
+### Description
+Forces an immediate sync of the manifest repository. This is useful for CI pipelines to trigger updates after a merge.
+
+### Method
+POST
+
+### Endpoint
+/api/gitops/reconcile
+
+### Request Example
+curl -X POST http://localhost:3000/api/gitops/reconcile -H "Authorization: Bearer <admin-api-key>"
+
+### Response
+#### Success Response (200)
+- The response reports the sync results, including counts for repositories created, updated, unchanged, pruned, and skipped.
+```
+
+--------------------------------
+
+### Search and retrieve documentation context in TypeScript
+
+Source: https://github.com/upstash/context7/blob/master/packages/sdk/README.md
+
+Initialize the client with an API key to search for specific libraries and retrieve documentation context in either JSON or plain text formats.
+
+```typescript
+import { Context7 } from "@upstash/context7-sdk";
+
+const client = new Context7({
+  apiKey: "<CONTEXT7_API_KEY>",
+});
+
+// Search for libraries
+const libraries = await client.searchLibrary(
+  "I need to build a UI with components",
+  "react"
+);
+console.log(libraries[0].id); // "/facebook/react"
+
+// Get documentation as JSON array (default)
+const docs = await client.getContext("How do I use hooks?", "/facebook/react");
+console.log(docs[0].title, docs[0].content);
+
+// Get documentation context as plain text
+const context = await client.getContext(
+  "How do I use hooks?",
+  "/facebook/react",
+  { type: "txt" }
+);
+console.log(context);
+```
+
+--------------------------------
+
+### Ingest Repository via REST API
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/on-premise.mdx
+
+Use this `curl` command to add a new repository for parsing and indexing via the Context7 REST API, specifying the repository URL in the request body.
+
+```bash
+curl -X POST http://localhost:3000/api/parse \
+  -H "Content-Type: application/json" \
+  -d '{"url": "https://github.com/your-org/your-repo"}'
+```
+
+--------------------------------
+
+### Configure Rovo Dev CLI
+
+Source: https://github.com/upstash/context7/blob/master/docs/resources/all-clients.mdx
+
+Configures Rovo Dev CLI to connect to the remote Context7 MCP server endpoint.
+
+```bash
+acli rovodev mcp
+```
+
+```json
+{
+  "mcpServers": {
+    "context7": {
+      "url": "https://mcp.context7.com/mcp"
+    }
+  }
+}
+```
+
+--------------------------------
+
+### Find Context7 Library IDs
+
+Source: https://github.com/upstash/context7/blob/master/packages/cli/README.md
+
+Resolve a library name to its Context7 library ID. Use the --json flag to output the results in JSON format.
+
+```bash
+ctx7 library react
+```
+
+```bash
+ctx7 library nextjs "app router"
+```
+
+```bash
+ctx7 library nextjs "app router setup"
+```
+
+```bash
+ctx7 library prisma "database relations"
+```
+
+```bash
+ctx7 library react --json
+```
+
+--------------------------------
+
+### POST /tools/resolve-library-id
+
+Source: https://github.com/upstash/context7/blob/master/plugins/cursor/context7/README.md
+
+Searches for libraries based on a given name and returns Context7-compatible identifiers, including available versions.
+
+```APIDOC
+## POST /tools/resolve-library-id
+
+### Description
+This tool searches for libraries by name and provides their Context7-compatible identifiers, along with a list of available versions. It helps in accurately pinpointing the desired library for documentation lookups.
+
+### Method
+POST
+
+### Endpoint
+/tools/resolve-library-id
+
+### Parameters
+#### Path Parameters
+(None)
+
+#### Query Parameters
+(None)
+
+#### Request Body
+- **library_name** (string) - Required - The name or partial name of the library to search for (e.g., "next.js").
+
+### Request Example
+"next.js"
+
+### Response
+#### Success Response (200)
+- **id** (string) - The Context7-compatible unique identifier for the library.
+- **name** (string) - The human-readable name of the library.
+- **versions** (array of string) - A list of available versions for the library.
+
+#### Response Example
+{
+  "id": "/vercel/next.js",
+  "name": "Next.js",
+  "versions": [
+    "v15.1.8",
+    "v14.2.0",
+    "..."
+  ]
+}
+```
+
+--------------------------------
+
+### Push review commit via Git
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/integrations/gerrit.mdx
+
+Command executed by Context7 to push generated documentation commits to Gerrit review namespace for the main branch.
+
+```bash
+git push origin HEAD:refs/for/main
+```
+
+--------------------------------
+
+### Authenticate Context7 CLI using an environment variable API key
+
+Source: https://github.com/upstash/context7/blob/master/skills/context7-cli/SKILL.md
+
+Configures Context7 CLI authentication by setting an API key as an environment variable, bypassing interactive login prompts.
+
+```bash
+export CONTEXT7_API_KEY=your_key
+```
+
+--------------------------------
+
+### Add Context7 MCP via CLI
+
+Source: https://github.com/upstash/context7/blob/master/docs/integrations/factory-ai.mdx
+
+Use the droid CLI command to register the Context7 MCP server with the required authorization header.
+
+```bash
+droid mcp add context7 https://mcp.context7.com/mcp --type http --header "Authorization: Bearer YOUR_API_KEY"
+```
+
+--------------------------------
+
+### Using Context7 in Copilot Chat Prompts
+
+Source: https://github.com/upstash/context7/blob/master/docs/clients/vscode.mdx
+
+Prefix your Copilot Chat prompts with 'use context7' to leverage Context7's current library documentation for your queries.
+
+```plaintext
+use context7 to show me how to set up middleware in Next.js 15
+use context7 for Prisma query examples with relations
+use context7 for the Supabase syntax for row-level security
+```
+
+--------------------------------
+
+### Define Docker Compose Configuration
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/deployment/docker.mdx
+
+Create a docker-compose.yml file to manage the service and persistent data volume.
+
+```yaml
+services:
+  context7:
+    image: ghcr.io/context7/enterprise:latest
+    container_name: context7
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - context7-data:/data
+    environment:
+      - LICENSE_KEY=${LICENSE_KEY}
+
+volumes:
+  context7-data:
+    driver: local
+```
+
+--------------------------------
+
+### Verify OpenClaw connection to Context7
+
+Source: https://github.com/upstash/context7/blob/master/docs/resources/all-clients.mdx
+
+Probes the connection and discovers available Context7 tools in OpenClaw.
+
+```sh
+openclaw mcp doctor context7 --probe
+```
+
+--------------------------------
+
+### Provision APIM Basic v2 using Bicep
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/enterprise-managed-auth/entra.mdx
+
+Defines the APIM resource with the BasicV2 SKU. Note that the Consumption tier does not support MCP backends.
+
+```bicep
+param name string
+param location string
+param publisherEmail string
+param publisherName string
+
+resource apim 'Microsoft.ApiManagement/service@2024-05-01' = {
+  name: name
+  location: location
+  sku: {
+    name: 'BasicV2'
+    capacity: 1
+  }
+  properties: {
+    publisherEmail: publisherEmail
+    publisherName: publisherName
+  }
+}
+
+output gatewayUrl string = apim.properties.gatewayUrl
+```
+
+--------------------------------
+
+### Copy Backup Archive to Docker Volume
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/backup-restore.mdx
+
+Copies a backup archive from the local filesystem into the Context7 Docker container's data volume, useful when the archive is not already mounted.
+
+```bash
+docker compose cp ./context7-backup-2026-06-12T02-00-00.tar.gz context7:/data/
+```
+
+--------------------------------
+
+### Set Context7 API Key Environment Variable
+
+Source: https://github.com/upstash/context7/blob/master/docs/clients/claude-code.mdx
+
+Export your Context7 API key as an environment variable (e.g., in `.zshrc` or `.bashrc`) before launching Claude Code to use your own plan and avoid anonymous rate limits.
+
+```bash
+# e.g. in ~/.zshrc or ~/.bashrc
+export CONTEXT7_API_KEY="your-api-key"
+```
+
+--------------------------------
+
+### Retrieve Context in Text Format (TypeScript)
+
+Source: https://github.com/upstash/context7/blob/master/docs/sdks/ts/commands/get-context.mdx
+
+Use this snippet to retrieve documentation context as a single plain text string, suitable for direct inclusion in LLM prompts. Specify `{ type: "txt" }` in the options.
+
+```typescript
+import { Context7 } from "@upstash/context7-sdk";
+
+const client = new Context7();
+
+const context = await client.getContext(
+  "How do I use hooks?",
+  "/facebook/react",
+  { type: "txt" }
+);
+
+console.log(context);
+```
+
+--------------------------------
+
+### POST /parse-openapi-upload
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/api/parse/upload-an-openapi-spec-file.mdx
+
+Upload an OpenAPI specification file directly for parsing and indexing
+
+```APIDOC
+## POST /parse-openapi-upload
+
+### Description
+Upload an OpenAPI specification file directly for parsing and indexing
+
+### Method
+POST
+
+### Endpoint
+/parse-openapi-upload
+```
+
+--------------------------------
+
+### Implementing Exponential Backoff for Rate Limits
+
+Source: https://github.com/upstash/context7/blob/master/docs/api-guide.mdx
+
+A Python implementation for handling 429 status codes by respecting the Retry-After header.
+
+```python
+import time
+import requests
+
+def fetch_with_retry(url, headers, max_retries=3):
+    for attempt in range(max_retries):
+        response = requests.get(url, headers=headers)
+
+        if response.status_code == 429:
+            retry_after = int(response.headers.get("Retry-After", 2 ** attempt))
+            time.sleep(retry_after)
+            continue
+
+        return response
+
+    raise Exception("Max retries exceeded")
+```
+
+--------------------------------
+
+### Configure Folder Inclusion and Exclusion in JSON
+
+Source: https://github.com/upstash/context7/blob/master/docs/library-owners.mdx
+
+Use folders to specify scan targets and excludeFolders to skip specific subdirectories or patterns. excludeFolders always takes priority over folders.
+
+```json
+{
+  "folders": ["docs", "api-reference"],
+  "excludeFolders": ["docs/archive", "**/old"]
+}
+```
+
+--------------------------------
+
+### Add Context7 MCP Server in Factory CLI
+
+Source: https://github.com/upstash/context7/blob/master/docs/resources/all-clients.mdx
+
+CLI commands to register Context7 as a remote or local MCP server in Factory droid.
+
+```sh
+droid mcp add context7 https://mcp.context7.com/mcp --type http --header "Authorization: Bearer YOUR_API_KEY"
+```
+
+```sh
+droid mcp add context7 "npx -y @upstash/context7-mcp" --env CONTEXT7_API_KEY=YOUR_API_KEY
+```
+
+--------------------------------
+
+### Manage CLI authentication session
+
+Source: https://github.com/upstash/context7/blob/master/docs/clients/cli.mdx
+
+Use these commands to authenticate via OAuth in a browser or terminal URL, inspect current login status, and log out.
+
+```bash
+# Log in (opens browser for OAuth)
+ctx7 login
+
+# Log in without opening the browser (prints URL instead)
+ctx7 login --no-browser
+
+# Check current login status
+ctx7 whoami
+
+# Log out
+ctx7 logout
+```
+
+--------------------------------
+
+### Update to latest version
+
+Source: https://github.com/upstash/context7/blob/master/docs/resources/troubleshooting.mdx
+
+Use the @latest tag in the command arguments to ensure the most recent package version is utilized.
+
+```json
+{
+  "mcpServers": {
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp@latest", "--api-key", "YOUR_API_KEY"]
+    }
+  }
+}
+```
+
+--------------------------------
+
+### Add Context7 plugin to opencode.json
+
+Source: https://github.com/upstash/context7/blob/master/docs/clients/opencode.mdx
+
+Manually registers the Context7 plugin in your OpenCode configuration file.
+
+```json
+{
+  "$schema": "https://opencode.ai/config.json",
+  "plugin": ["@upstash/context7-opencode"]
+}
+```
+
+--------------------------------
+
+### Resolve library IDs with ctx7 library
+
+Source: https://github.com/upstash/context7/blob/master/docs/clients/cli.mdx
+
+Searches the Context7 index by name with an intent query to rank matching library IDs.
+
+```bash
+ctx7 library react "How to clean up useEffect with async operations"
+ctx7 library nextjs "How to set up app router with middleware"
+ctx7 library prisma "How to define one-to-many relations with cascade delete"
+```
+
+--------------------------------
+
+### Direct Documentation Query using Library ID
+
+Source: https://github.com/upstash/context7/blob/master/docs/agentic-tools/ai-sdk/tools/query-docs.mdx
+
+Bypass the library resolution step by providing a direct library ID in the prompt. This reduces the number of tool calls and improves response speed.
+
+```typescript
+import { queryDocs } from "@upstash/context7-tools-ai-sdk";
+
+import { generateText, stepCountIs } from "ai";
+import { openai } from "@ai-sdk/openai";
+
+const { text } = await generateText({
+  model: openai("gpt-5.2"),
+  prompt: "Using /vercel/next.js, explain middleware",
+  tools: {
+    queryDocs: queryDocs(),
+  },
+  stopWhen: stepCountIs(3),
+});
+
+// The model recognizes the /org/project format and calls queryDocs directly
+```
+
+--------------------------------
+
+### Configure Remote Context7 MCP Server in Opencode
+
+Source: https://github.com/upstash/context7/blob/master/docs/resources/all-clients.mdx
+
+Adds the remote Context7 MCP server definition to the Opencode configuration file.
+
+```json
+"mcp": {
+  "context7": {
+    "type": "remote",
+    "url": "https://mcp.context7.com/mcp",
+    "headers": {
+      "Authorization": "Bearer YOUR_API_KEY"
+    },
+    "enabled": true
+  }
+}
+```
+
+--------------------------------
+
+### Basic Context7Agent usage with Anthropic model (TypeScript)
+
+Source: https://github.com/upstash/context7/blob/master/docs/agentic-tools/ai-sdk/agents/context7-agent.mdx
+
+Illustrates the fundamental steps to import, initialize `Context7Agent` with an Anthropic model, and retrieve a generated text response for a documentation query.
+
+```typescript
+import { Context7Agent } from "@upstash/context7-tools-ai-sdk";
+import { anthropic } from "@ai-sdk/anthropic";
+
+const agent = new Context7Agent({
+  model: anthropic("claude-sonnet-4-20250514"),
+});
+
+const { text } = await agent.generate({
+  prompt: "How do I set up authentication in Next.js?",
+});
+
+console.log(text);
+```
+
+--------------------------------
+
+### Configure Cursor Rules for Documentation
+
+Source: https://github.com/upstash/context7/blob/master/docs/clients/cursor.mdx
+
+Add this rule to your Cursor settings under 'Rules and Commands' to ensure the AI always utilizes Context7 for external package queries. This helps the editor provide current documentation instead of relying on static training data.
+
+```text
+Always use Context7 MCP when I ask about library documentation,
+API references, or need code examples from external packages.
+```
+
+--------------------------------
+
+### Chain library export and import via API pipe
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/library-import.mdx
+
+Directly pipes the cloud export output to the on-premise import endpoint. Useful for bridge hosts with access to both networks.
+
+```bash
+curl -sf -X POST https://context7.com/api/v1/enterprise/export \
+  -H "Authorization: Bearer YOUR_LICENSE_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"library":"vercel/next.js"}' \
+| curl -X POST https://your-instance.example.com/api/import-libraries \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  --data-binary @-
+```
+
+--------------------------------
+
+### Using queryDocs with AI SDK generateText
+
+Source: https://github.com/upstash/context7/blob/master/docs/agentic-tools/ai-sdk/tools/query-docs.mdx
+
+Integrate queryDocs into the AI SDK's generateText function alongside resolveLibraryId to fetch documentation based on user prompts.
+
+```typescript
+import { resolveLibraryId, queryDocs } from "@upstash/context7-tools-ai-sdk";
+import { generateText, stepCountIs } from "ai";
+import { openai } from "@ai-sdk/openai";
+
+const { text } = await generateText({
+  model: openai("gpt-5.2"),
+  prompt: "How do I use React Server Components?",
+  tools: {
+    resolveLibraryId: resolveLibraryId(),
+    queryDocs: queryDocs(),
+  },
+  stopWhen: stepCountIs(5),
+});
+```
+
+--------------------------------
+
+### Configure Context7 in Copilot Coding Agent
+
+Source: https://github.com/upstash/context7/blob/master/packages/mcp/README.md
+
+Add this configuration to the mcp section of your Copilot Coding Agent configuration file.
+
+```json
+{
+  "mcpServers": {
+    "context7": {
+      "type": "http",
+      "url": "https://mcp.context7.com/mcp",
+      "headers": {
+        "Authorization": "Bearer YOUR_API_KEY"
+      },
+      "tools": ["get-library-docs", "resolve-library-id"]
+    }
+  }
+}
+```
+
+--------------------------------
+
+### Set Authentication Headers
+
+Source: https://github.com/upstash/context7/blob/master/docs/resources/troubleshooting.mdx
+
+Format the API key correctly for either HTTP or stdio transport modes to resolve 401 Unauthorized errors.
+
+```json
+{
+  "headers": {
+    "Authorization": "Bearer YOUR_API_KEY"
+  }
+}
+```
+
+```json
+{
+  "args": ["-y", "@upstash/context7-mcp", "--api-key", "YOUR_API_KEY"]
+}
+```
+
+--------------------------------
+
+### AI SDK Code Review with Context7 Documentation
+
+Source: https://github.com/upstash/context7/blob/master/docs/agentic-tools/overview.mdx
+
+Build code review agents using Context7 tools within an AI SDK `generateText` call. This allows agents to verify code implementations against the latest API documentation for correctness and best practices.
+
+```typescript
+import { generateText, stepCountIs } from "ai";
+import { anthropic } from "@ai-sdk/anthropic";
+import { resolveLibraryId, queryDocs } from "@upstash/context7-tools-ai-sdk";
+
+const codeToReview = `
+      const { data } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', userId)
+        .single();
+    `;
+
+const { text } = await generateText({
+  model: anthropic("claude-sonnet-4-20250514"),
+  prompt: `Review this Supabase code for correctness and best practices:
+
+    ${codeToReview}
+
+    Check against the latest Supabase documentation.`,
+  tools: {
+    resolveLibraryId: resolveLibraryId(),
+    queryDocs: queryDocs(),
+  },
+  stopWhen: stepCountIs(5),
+});
+
+// Agent fetches current Supabase docs to verify:
+// - Correct method signatures
+// - Deprecated patterns
+// - Security best practices
+// - Error handling recommendations
+```
+
+--------------------------------
+
+### Resolve ESM issues
+
+Source: https://github.com/upstash/context7/blob/master/docs/resources/troubleshooting.mdx
+
+Enable experimental VM modules to fix errors related to missing modules like uriTemplate.js.
+
+```json
+{
+  "mcpServers": {
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "--node-options=--experimental-vm-modules", "@upstash/context7-mcp@1.0.6"]
+    }
+  }
+}
+```
+
+--------------------------------
+
+### Authenticate and Manage Context7 Session
+
+Source: https://github.com/upstash/context7/blob/master/packages/cli/README.md
+
+Log in to Context7 to access authenticated features and higher documentation rate limits. Check your current login status or log out of your session.
+
+```bash
+ctx7 login
+```
+
+```bash
+ctx7 whoami
+```
+
+```bash
+ctx7 logout
+```
+
+--------------------------------
+
+### API Endpoints
+
+Source: https://github.com/upstash/context7/blob/master/docs/api-guide.mdx
+
+Summary of available API endpoints for interacting with the Context7 service.
+
+```APIDOC
+## GET /api/v2/libs/search
+### Description
+Find libraries by name.
+
+## GET /api/v2/context
+### Description
+Retrieve documentation snippets for a library.
+
+## POST /api/v1/refresh
+### Description
+Refresh a library's documentation.
+
+## GET /api/v2/policies
+### Description
+Retrieve teamspace policy configuration.
+
+## PATCH /api/v2/policies
+### Description
+Update teamspace policies.
+
+## GET /api/v2/libs/metrics
+### Description
+Retrieve usage metrics for libraries.
+
+## POST /api/v2/add/repo/github
+### Description
+Submit a GitHub repository for processing.
+
+## POST /api/v2/add/repo/gitlab
+### Description
+Submit a GitLab repository for processing.
+
+## POST /api/v2/add/repo/bitbucket
+### Description
+Submit a Bitbucket repository for processing.
+
+## POST /api/v2/add/repo/git
+### Description
+Submit a repository from any other Git provider.
+
+## POST /api/v2/add/openapi
+### Description
+Submit an OpenAPI spec.
+
+## POST /api/v2/add/openapi-upload
+### Description
+Upload an OpenAPI spec file.
+
+## POST /api/v2/add/llmstxt
+### Description
+Submit an llms.txt file.
+
+## POST /api/v2/add/website
+### Description
+Submit a website for crawling.
+
+## POST /api/v2/add/confluence
+### Description
+Submit a Confluence space.
+
+## POST /api/v2/add/notion
+### Description
+Submit Notion pages.
+```
+
+--------------------------------
+
+### Explicit Context7 Invocation
+
+Source: https://github.com/upstash/context7/blob/master/docs/clients/codex.mdx
+
+Use these commands to trigger Context7 for specific library documentation queries.
+
+```text
+use context7 to show me how to set up middleware in Next.js 15
+use context7 for Prisma query examples with relations
+use context7 for the Supabase syntax for row-level security
+```
+
+--------------------------------
+
+### Add Context7 Local MCP Server in Claude Code
+
+Source: https://github.com/upstash/context7/blob/master/docs/resources/all-clients.mdx
+
+Configures Claude Code with a local stdio MCP server instance using npx. Requires specifying your Context7 API key.
+
+```sh
+claude mcp add --scope user context7 -- npx -y @upstash/context7-mcp --api-key YOUR_API_KEY
+```
+
+--------------------------------
+
+### Format and pipe Context7 CLI documentation output
+
+Source: https://github.com/upstash/context7/blob/master/skills/context7-cli/references/docs.md
+
+Request JSON output or pipe the command results to standard Unix utilities like head and grep.
+
+```bash
+# Output as structured JSON
+ctx7 docs /facebook/react "How to use hooks for state management" --json
+
+# Pipe to other tools — output is clean when not in a TTY (no spinners or colors)
+ctx7 docs /facebook/react "How to use hooks for state management" | head -50
+ctx7 docs /vercel/next.js "How to add middleware for route protection" | grep -A5 "middleware"
+```
+
+--------------------------------
+
+### Agent Workflow Process
+
+Source: https://github.com/upstash/context7/blob/master/docs/agentic-tools/ai-sdk/agents/context7-agent.mdx
+
+The Context7Agent follows a structured multi-step workflow for processing documentation queries. It automatically extracts library names, resolves library IDs, fetches relevant documentation, and generates contextual responses.
+
+```APIDOC
+## Agent Workflow Process
+
+### Description
+The Context7Agent executes a structured multi-step workflow to process documentation queries and generate accurate responses.
+
+### Workflow Steps
+
+1. **Extract Library Name** - Identifies the library/framework from the user's query
+2. **Resolve Library** - Calls resolveLibraryId to find the Context7 library ID
+3. **Select Best Match** - Analyzes results based on reputation, coverage, and relevance
+4. **Fetch Documentation** - Calls queryDocs with the selected library ID and user's query
+5. **Query if Needed** - Makes additional queries if initial context is insufficient
+6. **Generate Response** - Provides an answer with code examples from the documentation
+
+### Workflow Diagram
+```
+User Query
+    ↓
+Extract Library Name
+    ↓
+Call resolveLibraryId
+    ↓
+Results Found?
+    ├─ Yes → Select Best Match
+    └─ No → Report No Results
+    ↓
+Call queryDocs
+    ↓
+Sufficient Context?
+    ├─ Yes → Generate Response
+    └─ No → Fetch More Docs → (loop back)
+    ↓
+Return Answer with Examples
+```
+
+### Default Configuration
+- **Max Steps**: 5 (configurable via stopWhen parameter)
+- **Model Required**: Must provide a LanguageModel instance
+- **API Key**: Uses CONTEXT7_API_KEY environment variable if not provided
+```
+
+--------------------------------
+
+### Resolve library using ctx7 CLI
+
+Source: https://github.com/upstash/context7/blob/master/rules/context7-cli.md
+
+Use this command to search for a library and obtain its valid ID.
+
+```bash
+npx ctx7@latest library <name> "<what to look up>"
+```
+
+--------------------------------
+
+### Configure Context7 API Key in VS Code settings.json
+
+Source: https://github.com/upstash/context7/blob/master/docs/clients/vscode.mdx
+
+Add your Context7 API key to the VS Code settings.json file to enable higher rate limits and access to private repositories.
+
+```json
+{
+  "context7.apiKey": "YOUR_API_KEY"
+}
+```
+
+--------------------------------
+
+### context7_resolve-library-id
+
+Source: https://github.com/upstash/context7/blob/master/packages/opencode/README.md
+
+Searches for libraries and returns Context7-compatible identifiers along with available versions.
+
+```APIDOC
+## context7_resolve-library-id
+
+### Description
+Searches for libraries and returns Context7-compatible identifiers.
+
+### Input
+- **library** (string) - The name of the library to look up (e.g., "next.js").
+
+### Input Example
+```
+"next.js"
+```
+
+### Output Example
+```json
+{
+  "id": "/vercel/next.js",
+  "name": "Next.js",
+  "versions": ["v15.1.8", "v14.2.0"]
+}
+```
+```
+
+--------------------------------
+
+### Authenticate API Requests
+
+Source: https://github.com/upstash/context7/blob/master/docs/api-guide.mdx
+
+Include the API key in the Authorization header for all requests.
+
+```bash
+Authorization: Bearer CONTEXT7_API_KEY
+```
+
+--------------------------------
+
+### Add API key header for Kiro MCP configuration
+
+Source: https://github.com/upstash/context7/blob/master/docs/resources/all-clients.mdx
+
+Header block to include when authenticating Context7 requests with an API key in Kiro.
+
+```json
+"headers": {
+  "Authorization": "Bearer YOUR_API_KEY"
+}
+```
+
+--------------------------------
+
+### Configure Context7 in Augment settings.json
+
+Source: https://github.com/upstash/context7/blob/master/packages/mcp/README.md
+
+Add this configuration to the mcpServers array within your augment.advanced settings to integrate the Context7 MCP server.
+
+```json
+"augment.advanced": {
+  "mcpServers": [
+    {
+      "name": "context7",
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp", "--api-key", "YOUR_API_KEY"]
+    }
+  ]
+}
+```
+
+--------------------------------
+
+### Trigger Sync via API
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/gitops.mdx
+
+Command to manually trigger a reconciliation sync using the REST API.
+
+```bash
+curl -X POST http://localhost:3000/api/gitops/reconcile \
+  -H "Authorization: Bearer <admin-api-key>"
+```
+
+--------------------------------
+
+### PUT /api/gitops/config
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/gitops.mdx
+
+Updates the GitOps configuration.
+
+```APIDOC
+## PUT /api/gitops/config
+
+### Description
+Updates the current GitOps configuration settings.
+
+### Method
+PUT
+
+### Endpoint
+/api/gitops/config
+```
+
+--------------------------------
+
+### Default Excluded Folders Patterns
+
+Source: https://github.com/upstash/context7/blob/master/docs/library-owners.mdx
+
+Standard patterns for archiving, legacy content, and non-English translations excluded by default.
+
+```text
+*archive*, *archived*, old, docs/old, *deprecated*, *legacy*
+*previous*, *outdated*, *superseded*
+i18n/zh*, i18n/es*, i18n/fr*, i18n/de*, i18n/ja*, i18n/ko*
+i18n/ru*, i18n/pt*, i18n/it*, i18n/ar*, i18n/hi*, i18n/tr*
+i18n/nl*, i18n/pl*, i18n/sv*, i18n/vi*, i18n/th*
+zh-cn, zh-tw, zh-hk, zh-mo, zh-sg
+```
+
+--------------------------------
+
+### POST /searchLibrary
+
+Source: https://github.com/upstash/context7/blob/master/docs/sdks/ts/commands/search-library.mdx
+
+Search across available libraries using a query string and library name. Returns an array of matching library objects with metadata including trust scores, benchmark scores, and available versions to help with library selection.
+
+```APIDOC
+## POST /searchLibrary
+
+### Description
+Search across available libraries. Returns an array of matching libraries with metadata useful for selection.
+
+### Method
+POST
+
+### Endpoint
+/searchLibrary
+
+### Parameters
+#### Request Body
+- **query** (string) - Required - The user's question or task (used for relevance ranking)
+- **libraryName** (string) - Required - The library name to search for
+
+### Request Example
+```json
+{
+  "query": "I need to build a UI",
+  "libraryName": "react"
+}
+```
+
+### Response
+#### Success Response (200)
+Returns `Library[]` - an array of library objects.
+
+- **id** (string) - Unique identifier for the library (e.g., `/facebook/react`)
+- **name** (string) - Display name of the library
+- **description** (string) - Brief description of the library
+- **totalSnippets** (number) - Total number of documentation snippets available
+- **trustScore** (number) - Trust score of the library
+- **benchmarkScore** (number) - Benchmark score indicating documentation quality
+- **versions** (string[]) - Available versions
+
+#### Response Example
+```json
+[
+  {
+    "id": "/facebook/react",
+    "name": "React",
+    "description": "A JavaScript library for building user interfaces with components",
+    "totalSnippets": 1250,
+    "trustScore": 0.98,
+    "benchmarkScore": 0.95,
+    "versions": ["18.0.0", "17.0.2", "16.13.1"]
+  },
+  {
+    "id": "/preactjs/preact",
+    "name": "Preact",
+    "description": "Fast 3kB alternative to React with the same modern API",
+    "totalSnippets": 450,
+    "trustScore": 0.92,
+    "benchmarkScore": 0.88,
+    "versions": ["10.11.0", "10.10.0"]
+  }
+]
+```
+```
+
+--------------------------------
+
+### POST /api/v1/enterprise/export
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/library-import.mdx
+
+Exports a library's full content from Context7 Cloud, including all code and info snippets, formatted for direct use with the import endpoint.
+
+```APIDOC
+## POST /api/v1/enterprise/export
+
+### Description
+Call the cloud export endpoint to retrieve a library's full content (every code and info snippet, without embeddings). This is only available for public libraries.
+
+### Method
+POST
+
+### Endpoint
+https://context7.com/api/v1/enterprise/export
+
+### Parameters
+#### Request Body
+- **library** (string) - Required - The identifier of the public library to export (e.g., "vercel/next.js").
+
+### Request Example
+```json
+{
+  "library": "vercel/next.js"
+}
+```
+
+### Response
+#### Success Response (200)
+- **libraries** (array) - A list of library objects containing code and info snippets, shaped for the import endpoint.
+```
+
+--------------------------------
+
+### Configure OAuth Protected Resource Metadata Policy in XML
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/enterprise-managed-auth/entra.mdx
+
+Returns the PRM document required by MCP clients to discover authorization servers. Replace placeholders with your APIM host and gateway application ID.
+
+```xml
+<policies>
+  <inbound>
+    <return-response>
+      <set-status code="200" reason="OK" />
+      <set-header name="Content-Type" exists-action="override">
+        <value>application/json</value>
+      </set-header>
+      <set-body>{
+  "resource": "https://<your-apim-host>/context7",
+  "authorization_servers": ["https://<your-apim-host>"],
+  "scopes_supported": ["api://<gateway-app-id>/Mcp.Gateway.Access"],
+  "bearer_methods_supported": ["header"]
+}</set-body>
+    </return-response>
+  </inbound>
+</policies>
+```
+
+--------------------------------
+
+### Handle Context7 API Errors
+
+Source: https://github.com/upstash/context7/blob/master/docs/sdks/ts/getting-started.mdx
+
+Illustrates how to catch and handle `Context7Error` instances thrown by the SDK for API-related issues.
+
+```typescript
+import { Context7, Context7Error } from "@upstash/context7-sdk";
+
+const client = new Context7();
+
+try {
+  const context = await client.getContext("query", "/invalid/library");
+} catch (error) {
+  if (error instanceof Context7Error) {
+    console.error("Context7 API Error:", error.message);
+  } else {
+    console.error("Unexpected error:", error);
+  }
+}
+```
+
+--------------------------------
+
+### Connect to Docker MCP Gateway
+
+Source: https://github.com/upstash/context7/blob/master/docs/resources/all-clients.mdx
+
+Connects an MCP client to Docker's MCP gateway for servers enabled in Docker Desktop MCP Toolkit.
+
+```json
+{
+  "mcpServers": {
+    "MCP_DOCKER": {
+      "command": "docker",
+      "args": ["mcp", "gateway", "run"],
+      "type": "stdio"
+    }
+  }
+}
+```
+
+--------------------------------
+
+### Define the StatefulSet for Context7
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/deployment/kubernetes.mdx
+
+Configures a single-replica StatefulSet with persistent storage for SQLite and LanceDB. Ensure the replica count remains at 1 to avoid database lock errors.
+
+```yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: context7
+  namespace: context7
+spec:
+  serviceName: context7
+  replicas: 1
+  selector:
+    matchLabels:
+      app: context7
+  template:
+    metadata:
+      labels:
+        app: context7
+    spec:
+      imagePullSecrets:
+        - name: context7-registry
+      terminationGracePeriodSeconds: 60
+      # Runs unprivileged. runAsUser can be any UID; fsGroup makes the volume
+      # writable by it. See Running as non-root below.
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
+      containers:
+        - name: context7
+          image: ghcr.io/context7/enterprise:latest
+          imagePullPolicy: Always
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+          ports:
+            - containerPort: 3000
+              name: http
+          env:
+            - name: LICENSE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: context7-config
+                  key: LICENSE_KEY
+          volumeMounts:
+            - name: data
+              mountPath: /data
+          resources:
+            requests:
+              cpu: "1"
+              memory: "2Gi"
+            limits:
+              cpu: "4"
+              memory: "8Gi"
+          startupProbe:
+            httpGet:
+              path: /api/health
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            failureThreshold: 12
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: http
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: http
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        # storageClassName: gp3  # Set this if your cluster has no default StorageClass
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 10Gi
+```
+
+--------------------------------
+
+### GitOps API Endpoints
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/gitops.mdx
+
+List of available REST API endpoints for monitoring and managing GitOps configuration.
+
+```text
+GET  /api/gitops/status       # current configuration and the last sync result
+PUT  /api/gitops/config        # update the configuration
+POST /api/gitops/reconcile     # run a sync now
+```
+
+--------------------------------
+
+### Configure API Key via environment variables
+
+Source: https://github.com/upstash/context7/blob/master/packages/sdk/README.md
+
+Set the CONTEXT7_API_KEY environment variable to allow the SDK to initialize automatically without passing options to the constructor.
+
+```shell
+CONTEXT7_API_KEY=ctx7sk-...
+```
+
+```typescript
+const client = new Context7();
+```
+
+--------------------------------
+
+### npx ctx7@latest docs
+
+Source: https://github.com/upstash/context7/blob/master/skills/find-docs/SKILL.md
+
+Retrieves documentation for a specific library ID or version-specific library ID using a query.
+
+```APIDOC
+## npx ctx7@latest docs <library_id> <query>
+
+### Description
+Retrieves documentation for a specific library ID or version-specific library ID based on a query.
+
+### Usage
+```bash
+npx ctx7@latest docs <library_id> "<query>"
+```
+
+### Arguments
+- **library_id** (string) - Required - The Context7-compatible library ID (e.g., `/vercel/next.js`) or version-specific ID (e.g., `/vercel/next.js/v14.3.0-canary.87`).
+- **query** (string) - Required - The query describing what documentation to retrieve.
+
+### Examples
+```bash
+# General (latest indexed)
+npx ctx7@latest docs /vercel/next.js "How to set up app router"
+
+# Version-specific
+npx ctx7@latest docs /vercel/next.js/v14.3.0-canary.87 "How to set up app router"
+```
+```
+
+--------------------------------
+
+### Configure remote Context7 MCP server in OpenAI Codex config.toml
+
+Source: https://github.com/upstash/context7/blob/master/docs/resources/all-clients.mdx
+
+Specifies remote MCP URL and Bearer token headers in the Codex configuration file.
+
+```toml
+[mcp_servers.context7]
+url = "https://mcp.context7.com/mcp"
+http_headers = { "Authorization" = "Bearer YOUR_API_KEY" }
+```
+
+--------------------------------
+
+### AI SDK Code Generation with Context7Agent
+
+Source: https://github.com/upstash/context7/blob/master/docs/agentic-tools/overview.mdx
+
+Utilize the `Context7Agent` from `@upstash/context7-tools-ai-sdk` to ensure generated code adheres to current APIs and best practices by automatically leveraging Context7's documentation.
+
+```typescript
+import { Context7Agent } from "@upstash/context7-tools-ai-sdk";
+import { anthropic } from "@ai-sdk/anthropic";
+
+const agent = new Context7Agent({
+  model: anthropic("claude-sonnet-4-20250514"),
+});
+
+const { text } = await agent.generate({
+  prompt: "Generate a Supabase Edge Function that handles webhooks",
+});
+```
+
+--------------------------------
+
+### Enable pgvector Extension in PostgreSQL
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/deployment/scaling.mdx
+
+Run this command to enable the pgvector extension on your PostgreSQL database. Ensure you are connected with a privileged role (e.g., rds_superuser or cloudsqlsuperuser).
+
+```sql
+CREATE EXTENSION vector;
+```
+
+--------------------------------
+
+### Verify Outbound Connectivity
+
+Source: https://github.com/upstash/context7/blob/master/docs/resources/troubleshooting.mdx
+
+Use curl to test connectivity after updating proxy settings.
+
+```bash
+curl https://mcp.context7.com/ping
+```
+
+--------------------------------
+
+### Retrieve Available Library Versions in TypeScript
+
+Source: https://github.com/upstash/context7/blob/master/docs/sdks/ts/commands/search-library.mdx
+
+Shows how to access the versions array from a library object returned by the search function. This is useful for checking compatibility or specific release availability.
+
+```typescript
+const libraries = await client.searchLibrary("I want to use lodash", "lodash");
+
+const library = libraries[0];
+if (library.versions) {
+  console.log(`Available versions: ${library.versions.join(", ")}`);
+}
+```
+
+--------------------------------
+
+### Configure Gerrit review push ref pattern
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/integrations/gerrit.mdx
+
+Set this ref pattern in review publishing settings. `{branch}` is dynamically replaced with the target branch name.
+
+```text
+refs/for/{branch}
+```
+
+--------------------------------
+
+### Configure remote Context7 MCP server in Kiro
+
+Source: https://github.com/upstash/context7/blob/master/docs/resources/all-clients.mdx
+
+Configures remote MCP server connectivity in Kiro settings.
+
+```json
+{
+  "mcpServers": {
+    "context7": {
+      "url": "https://mcp.context7.com/mcp"
+    }
+  }
+}
+```
+
+--------------------------------
+
+### Trae MCP Server Configuration
+
+Source: https://github.com/upstash/context7/blob/master/packages/mcp/README.md
+
+Remote and local server configuration for Trae IDE.
+
+```json
+{
+  "mcpServers": {
+    "context7": {
+      "url": "https://mcp.context7.com/mcp"
+    }
+  }
+}
+```
+
+```json
+{
+  "mcpServers": {
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp", "--api-key", "YOUR_API_KEY"]
+    }
+  }
+}
+```
+
+--------------------------------
+
+### Configure MCP Server in VS Code
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/enterprise-managed-auth/entra.mdx
+
+Add the APIM endpoint to your mcp.json configuration file to enable communication between VS Code and the MCP server.
+
+```json
+{
+  "servers": {
+    "context7": {
+      "type": "http",
+      "url": "https://<your-apim-host>/context7/mcp"
+    }
+  }
+}
+```
+
+--------------------------------
+
+### Opencode Remote MCP Configuration
+
+Source: https://github.com/upstash/context7/blob/master/packages/mcp/README.md
+
+Remote server configuration for Opencode.
+
+```json
+"mcp": {
+  "context7": {
+    "type": "remote",
+    "url": "https://mcp.context7.com/mcp",
+    "headers": {
+      "Authorization": "Bearer YOUR_API_KEY"
+    },
+    "enabled": true
+  }
+}
+```
+
+--------------------------------
+
+### Create .cursorrules for Project Integration
+
+Source: https://github.com/upstash/context7/blob/master/docs/clients/cursor.mdx
+
+Define project-specific rules in a .cursorrules file located in your project root. This configuration standardizes how Context7 is triggered for library APIs and framework configurations across your development team.
+
+```markdown
+# Context7 Integration
+
+When the user asks about:
+- Library APIs or documentation
+- Framework setup or configuration
+- Code examples for external packages
+- How to use a specific library feature
+
+Automatically use Context7 MCP to fetch current documentation. Don't rely on training data for library-specific code.
+```
+
+--------------------------------
+
+### Trigger project index refresh using cURL
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/integrations/gerrit.mdx
+
+Call the refresh endpoint from a post-submit CI or scheduled job to pull the latest repository state and regenerate documentation. Requires an admin API key and valid project ID.
+
+```bash
+curl -X POST "https://context7.example.com/api/projects/<project-id>/refresh" \
+  -H "Authorization: Bearer <admin-api-key>"
+```
+
+--------------------------------
+
+### Enable Verbose Logging in MCP Configuration
+
+Source: https://github.com/upstash/context7/blob/master/docs/resources/troubleshooting.mdx
+
+Add the DEBUG environment variable to your MCP server configuration to output detailed logs.
+
+```json
+{
+  "mcpServers": {
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp", "--api-key", "YOUR_API_KEY"],
+      "env": {
+        "DEBUG": "*"
+      }
+    }
+  }
+}
+```
+
+--------------------------------
+
+### Configure Context7Agent with custom API key and stop condition (TypeScript)
+
+Source: https://github.com/upstash/context7/blob/master/docs/agentic-tools/ai-sdk/agents/context7-agent.mdx
+
+Explains how to provide a custom API key and modify the agent's stopping condition using `stepCountIs` for more complex or extended queries.
+
+```typescript
+import { Context7Agent } from "@upstash/context7-tools-ai-sdk";
+import { anthropic } from "@ai-sdk/anthropic";
+import { stepCountIs } from "ai";
+
+const agent = new Context7Agent({
+  model: anthropic("claude-sonnet-4-20250514"),
+  apiKey: process.env.CONTEXT7_API_KEY,
+  stopWhen: stepCountIs(8), // Allow more steps for complex queries
+});
+```
+
+--------------------------------
+
+### Context7Agent constructor signature (TypeScript)
+
+Source: https://github.com/upstash/context7/blob/master/docs/agentic-tools/ai-sdk/agents/context7-agent.mdx
+
+Shows the constructor signature for `Context7Agent`, indicating it accepts an optional `Context7AgentConfig` object for configuration.
+
+```typescript
+new Context7Agent(config?: Context7AgentConfig)
+```
+
+--------------------------------
+
+### Cline MCP Configuration
+
+Source: https://github.com/upstash/context7/blob/master/packages/mcp/README.md
+
+Add the Context7 remote server configuration to the Cline MCP settings.
+
+```json
+{
+  "mcpServers": {
+    "context7": {
+      "url": "https://mcp.context7.com/mcp",
+      "type": "streamableHttp",
+      "headers": {
+        "Authorization": "Bearer YOUR_API_KEY"
+      }
+    }
+  }
+}
+```
+
+--------------------------------
+
+### GitHub Actions Workflow for Context7 Documentation Refresh
+
+Source: https://github.com/upstash/context7/blob/master/docs/integrations/github-actions.mdx
+
+This workflow automatically triggers a Context7 library refresh when changes are pushed to the specified branch. Ensure the CONTEXT7_API_KEY is configured as a repository secret.
+
+```yaml
+name: Refresh Context7 Docs
+
+on:
+  push:
+    branches:
+      - master # change to your default branch if different
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Context7 Refresh
+        run: |
+          curl -s -X POST https://context7.com/api/v1/refresh \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer ${{ secrets.CONTEXT7_API_KEY }}" \
+            -d '{"libraryName": "/${{ github.repository }}"}'
+```
+
+--------------------------------
+
+### Configure remote Context7 MCP server in Kilo Code
+
+Source: https://github.com/upstash/context7/blob/master/docs/resources/all-clients.mdx
+
+Add to the mcp key in kilo.jsonc for remote HTTP connection. Requires a valid Bearer authorization token.
+
+```json
+{
+  "mcp": {
+    "context7": {
+      "type": "remote",
+      "url": "https://mcp.context7.com/mcp",
+      "headers": {
+        "Authorization": "Bearer YOUR_API_KEY"
+      },
+      "enabled": true
+    }
+  }
+}
+```
+
+--------------------------------
+
+### Query Context7 using direct library ID
+
+Source: https://github.com/upstash/context7/blob/master/docs/clients/opencode.mdx
+
+Bypasses library ID resolution by explicitly specifying the path to the library.
+
+```text
+use context7 with /supabase/supabase for authentication docs
+use context7 with /vercel/next.js for app router setup
+```
+
+--------------------------------
+
+### POST /parse-openapi
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/api/parse/parse-an-openapi-spec-by-url.mdx
+
+Queue a remote OpenAPI specification (JSON or YAML) for parsing and indexing
+
+```APIDOC
+## POST /parse-openapi
+
+### Description
+Queue a remote OpenAPI specification (JSON or YAML) for parsing and indexing
+
+### Method
+POST
+
+### Endpoint
+/parse-openapi
+```
+
+--------------------------------
+
+### Context7 MCP Server Configuration
+
+Source: https://github.com/upstash/context7/blob/master/plugins/codex/context7/README.md
+
+This JSON snippet defines the HTTP endpoint for the Context7 MCP server that the plugin connects to.
+
+```json
+{
+  "type": "http",
+  "url": "https://mcp.context7.com/mcp"
+}
+```
+
+--------------------------------
+
+### Configure Copilot Coding Agent MCP Server
+
+Source: https://github.com/upstash/context7/blob/master/docs/resources/all-clients.mdx
+
+Set up remote HTTP MCP access for GitHub Copilot Coding Agent. Store the API key as a repository secret with the COPILOT_MCP_ prefix.
+
+```json
+{
+  "mcpServers": {
+    "context7": {
+      "type": "http",
+      "url": "https://mcp.context7.com/mcp",
+      "headers": {
+        "Authorization": "Bearer $COPILOT_MCP_CONTEXT7_API_KEY"
+      },
+      "tools": ["query-docs", "resolve-library-id"]
+    }
+  }
+}
+```
+
+--------------------------------
+
+### Define the Kubernetes Service
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/deployment/kubernetes.mdx
+
+Exposes the Context7 application internally within the cluster on port 3000.
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: context7
+  namespace: context7
+spec:
+  selector:
+    app: context7
+  ports:
+    - port: 3000
+      targetPort: http
+      protocol: TCP
+      name: http
+  type: ClusterIP
+```
+
+--------------------------------
+
+### Authenticate API requests with cURL
+
+Source: https://github.com/upstash/context7/blob/master/docs/howto/api-keys.mdx
+
+Use the Authorization header with a Bearer token to authenticate requests to the Context7 API.
+
+```bash
+curl "https://context7.com/api/v2/context?libraryId=/vercel/next.js&query=routing" \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+--------------------------------
+
+### Add Context7 MCP to Amp
+
+Source: https://github.com/upstash/context7/blob/master/docs/resources/all-clients.mdx
+
+Run this terminal command to add the remote Context7 MCP server endpoint to Amp without an API key.
+
+```sh
+amp mcp add context7 https://mcp.context7.com/mcp
+```
+
+--------------------------------
+
+### Access Library Admin Page
+
+Source: https://github.com/upstash/context7/blob/master/docs/howto/chat-widget.mdx
+
+Navigate to this URL structure to manage your library's chat widget settings on Context7.
+
+```text
+https://context7.com/{owner}/{repo}/admin
+```
+
+--------------------------------
+
+### Configure API Key for HTTP Transport
+
+Source: https://github.com/upstash/context7/blob/master/docs/resources/troubleshooting.mdx
+
+Add the API key to the headers configuration to increase rate limits.
+
+```json
+{
+  "mcpServers": {
+    "context7": {
+      "url": "https://mcp.context7.com/mcp",
+      "headers": {
+        "Authorization": "Bearer YOUR_API_KEY"
+      }
+    }
+  }
+}
+```
+
+--------------------------------
+
+### VS Code MCP Configuration
+
+Source: https://github.com/upstash/context7/blob/master/packages/mcp/README.md
+
+Define remote or local MCP server settings in the VS Code configuration file.
+
+```json
+"mcp": {
+  "servers": {
+    "context7": {
+      "type": "http",
+      "url": "https://mcp.context7.com/mcp",
+      "headers": {
+        "Authorization": "Bearer YOUR_API_KEY"
+      }
+    }
+  }
+}
+```
+
+```json
+"mcp": {
+  "servers": {
+    "context7": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp", "--api-key", "YOUR_API_KEY"]
+    }
+  }
+}
+```
+
+--------------------------------
+
+### POST /projects/{projectId}/refresh
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/api/parse/refresh-a-library.mdx
+
+Re-parse an existing library using its stored settings. This is used to update the parsed content of a library within a specific project.
+
+```APIDOC
+## POST /projects/{projectId}/refresh
+
+### Description
+Re-parse an existing library using its stored settings
+
+### Method
+POST
+
+### Endpoint
+/projects/{projectId}/refresh
+
+### Parameters
+#### Path Parameters
+- **projectId** - Required - The unique identifier of the project.
+```
+
+--------------------------------
+
+### Configure Authorization Header
+
+Source: https://github.com/upstash/context7/blob/master/docs/integrations/code-rabbit.mdx
+
+Add this JSON configuration to the MCP server settings in the CodeRabbit dashboard to authenticate with your API key.
+
+```json
+{
+  "Authorization": "Bearer YOUR_API_KEY"
+}
+```
+
+--------------------------------
+
+### Find Most Trusted Library using TypeScript
+
+Source: https://github.com/upstash/context7/blob/master/docs/sdks/ts/commands/search-library.mdx
+
+Demonstrates sorting search results by trust score to identify the most reliable library for a specific task. This helps in filtering results based on community trust metrics.
+
+```typescript
+const libraries = await client.searchLibrary("state management", "redux");
+
+const trusted = libraries.sort((a, b) => b.trustScore - a.trustScore);
+console.log("Most trusted:", trusted[0].name);
+```
+
+--------------------------------
+
+### Scan SSH host keys using ssh-keyscan
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/integrations/other-git.mdx
+
+Generates a known_hosts entry for pinning a Git server's host key. Use this output when configuring SSH authentication in the UI or container mounts.
+
+```bash
+ssh-keyscan -p 29418 gerrit.your-company.com
+```
+
+--------------------------------
+
+### Stream responses from Context7Agent (TypeScript)
+
+Source: https://github.com/upstash/context7/blob/master/docs/agentic-tools/ai-sdk/agents/context7-agent.mdx
+
+Demonstrates how to use the `stream()` method of `Context7Agent` to receive responses in chunks, suitable for real-time display or processing.
+
+```typescript
+import { Context7Agent } from "@upstash/context7-tools-ai-sdk";
+import { anthropic } from "@ai-sdk/anthropic";
+
+const agent = new Context7Agent({
+  model: anthropic("claude-sonnet-4-20250514"),
+});
+
+const { textStream } = await agent.stream({
+  prompt: "How do I create a Supabase Edge Function?",
+});
+
+for await (const chunk of textStream) {
+  process.stdout.write(chunk);
+}
+```
+
+--------------------------------
+
+### Retrieve Context in JSON Format (TypeScript)
+
+Source: https://github.com/upstash/context7/blob/master/docs/sdks/ts/commands/get-context.mdx
+
+Use this snippet to retrieve documentation context as an array of `Documentation` objects, which is the default format. Iterate through the `docs` array to access individual snippet details like title, content, and source.
+
+```typescript
+import { Context7 } from "@upstash/context7-sdk";
+
+const client = new Context7();
+
+const docs = await client.getContext(
+  "How do I use hooks?",
+  "/facebook/react"
+);
+
+docs.forEach((doc) => {
+  console.log(doc.title);
+  console.log(doc.content);
+  console.log(doc.source);
+});
+```
+
+--------------------------------
+
+### Generate Encryption Key
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/deployment/scaling.mdx
+
+Generate a secure 32-byte hex-encoded random key to use as the ENCRYPTION_KEY environment variable.
+
+```bash
+openssl rand -hex 32   # ENCRYPTION_KEY
+```
+
+--------------------------------
+
+### Context7Agent usage with OpenAI model (TypeScript)
+
+Source: https://github.com/upstash/context7/blob/master/docs/agentic-tools/ai-sdk/agents/context7-agent.mdx
+
+Shows how to configure `Context7Agent` to use an OpenAI language model instead of Anthropic, demonstrating model flexibility for documentation queries.
+
+```typescript
+import { Context7Agent } from "@upstash/context7-tools-ai-sdk";
+import { openai } from "@ai-sdk/openai";
+
+const agent = new Context7Agent({
+  model: openai("gpt-5.2"),
+});
+
+const { text } = await agent.generate({
+  prompt: "Explain Tanstack Query's useQuery hook",
+});
+```
+
+--------------------------------
+
+### Configure Context7 API key via environment variables
+
+Source: https://github.com/upstash/context7/blob/master/packages/tools-ai-sdk/README.md
+
+Define the CONTEXT7_API_KEY environment variable to enable automatic authentication for tools and agents. This avoids hardcoding sensitive keys in the application source code.
+
+```sh
+CONTEXT7_API_KEY=ctx7sk-...
+```
+
+```typescript
+const tool = resolveLibrary(); // Uses CONTEXT7_API_KEY automatically
+```
+
+--------------------------------
+
+### Define the Kubernetes Ingress
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/deployment/kubernetes.mdx
+
+Configures external access to the Context7 service via an NGINX Ingress controller. Update the host and TLS secret names to match your environment.
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: context7
+  namespace: context7
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - context7.internal.yourcompany.com
+      secretName: context7-tls
+  rules:
+    - host: context7.internal.yourcompany.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: context7
+                port:
+                  number: 3000
+```
+
+--------------------------------
+
+### Add Chat Widget to Next.js Layout
+
+Source: https://github.com/upstash/context7/blob/master/docs/howto/chat-widget.mdx
+
+Use the next/script component with the afterInteractive strategy to load the widget on every page. Ensure the script is placed within the body of your root layout.
+
+```tsx
+import Script from "next/script";
+
+export default function RootLayout({ children }) {
+  return (
+    <html lang="en">
+      <body>
+        {children}
+        <Script
+          src="https://context7.com/widget.js"
+          data-library="/owner/repo"
+          strategy="afterInteractive"
+        />
+      </body>
+    </html>
+  );
+}
+```
+
+--------------------------------
+
+### resolveLibraryId Function Signature
+
+Source: https://github.com/upstash/context7/blob/master/docs/agentic-tools/ai-sdk/tools/resolve-library-id.mdx
+
+Shows the function signature for `resolveLibraryId`, indicating it accepts an optional configuration object.
+
+```typescript
+resolveLibraryId(config?: Context7ToolsConfig)
+```
+
+--------------------------------
+
+### Format and pipe ctx7 docs output
+
+Source: https://github.com/upstash/context7/blob/master/docs/clients/cli.mdx
+
+Output docs in structured JSON format or pipe directly into standard command-line filtering utilities.
+
+```bash
+# Output as structured JSON
+ctx7 docs /facebook/react "How to use hooks for state management" --json
+
+# Pipe to other tools — output is clean when not in a TTY (no spinners or colors)
+ctx7 docs /facebook/react "How to use hooks for state management" | head -50
+ctx7 docs /vercel/next.js "How to add middleware for route protection" | grep -A 10 "middleware"
+```
+
+--------------------------------
+
+### Update Entra app token version via Azure CLI
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/enterprise-managed-auth/entra.mdx
+
+Use these commands to force the application to issue v2 tokens if the Manifest UI fails to persist the setting. This ensures the issuer is compatible with the Context7 backend.
+
+```bash
+az ad app update --id <gateway-app-client-id> --set api.requestedAccessTokenVersion=2
+az ad app show --id <gateway-app-client-id> --query api.requestedAccessTokenVersion -o tsv  # should print 2
+```
+
+--------------------------------
+
+### Register standard MCP endpoint with OpenClaw
+
+Source: https://github.com/upstash/context7/blob/master/docs/resources/all-clients.mdx
+
+Registers the Context7 MCP server endpoint using streamable HTTP transport for anonymous access.
+
+```sh
+openclaw mcp add context7 \
+  --url https://mcp.context7.com/mcp \
+  --transport streamable-http
+```
+
+--------------------------------
+
+### Configure OAuth Authorization Server Metadata Policy in XML
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/enterprise-managed-auth/entra.mdx
+
+Advertises supported grant types, scopes, and endpoints for the OAuth bridge. The JWKS URI must point to the Entra discovery keys for token validation.
+
+```xml
+<policies>
+  <inbound>
+    <return-response>
+      <set-status code="200" reason="OK" />
+      <set-header name="Content-Type" exists-action="override">
+        <value>application/json</value>
+      </set-header>
+      <set-body>{
+  "issuer": "https://<your-apim-host>",
+  "authorization_endpoint": "https://<your-apim-host>/authorize",
+  "token_endpoint": "https://<your-apim-host>/token",
+  "jwks_uri": "https://login.microsoftonline.com/<your-tenant-id>/discovery/v2.0/keys",
+  "response_types_supported": ["code"],
+  "grant_types_supported": ["authorization_code", "refresh_token"],
+  "code_challenge_methods_supported": ["S256"],
+  "token_endpoint_auth_methods_supported": ["none", "client_secret_post"],
+  "scopes_supported": ["openid", "profile", "email", "offline_access", "api://<gateway-app-id>/Mcp.Gateway.Access"]
+}</set-body>
+    </return-response>
+  </inbound>
+</policies>
+```
+
+--------------------------------
+
+### Add authorization header option for OpenClaw
+
+Source: https://github.com/upstash/context7/blob/master/docs/resources/all-clients.mdx
+
+Appends an API key authorization header option to OpenClaw registration commands to increase rate limits.
+
+```sh
+--header "Authorization: Bearer YOUR_API_KEY"
+```
+
+--------------------------------
+
+### Direct Library ID Invocation
+
+Source: https://github.com/upstash/context7/blob/master/docs/clients/codex.mdx
+
+Specify a library ID to bypass the resolution step and query documentation directly.
+
+```text
+use context7 with /supabase/supabase for authentication docs
+use context7 with /vercel/next.js for app router setup
+```
+
+--------------------------------
+
+### POST /api/projects/<project-id>/refresh
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/integrations/gerrit.mdx
+
+Triggers a refresh for a specified project. A refresh pulls the latest repository state, rebuilds the index, and regenerates code documentation.
+
+```APIDOC
+## POST /api/projects/<project-id>/refresh
+
+### Description
+Triggers a refresh for the specified project. This pulls the latest repository state, rebuilds the index, and regenerates the code documentation.
+
+### Method
+POST
+
+### Endpoint
+`/api/projects/<project-id>/refresh`
+
+### Parameters
+#### Path Parameters
+- **project-id** (string) - Required - The unique identifier of the project to refresh.
+
+### Headers
+- **Authorization** (string) - Required - Bearer token in the format `Bearer <admin-api-key>`.
+
+### Request Example
+```bash
+curl -X POST "https://context7.example.com/api/projects/<project-id>/refresh" \
+  -H "Authorization: Bearer <admin-api-key>"
+```
+```
+
+--------------------------------
+
+### Store credentials as APIM named values using Azure CLI
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/enterprise-managed-auth/entra.mdx
+
+Store Entra tenant ID, client IDs, and secrets as named values. For production, use Azure Key Vault for secrets instead of inline values.
+
+```bash
+az apim nv create -g $RG --service-name $APIM \
+  --named-value-id entra-tenant-id \
+  --display-name entra-tenant-id \
+  --value "<your-tenant-id>"
+
+az apim nv create -g $RG --service-name $APIM \
+  --named-value-id apim-gateway-app-id \
+  --display-name apim-gateway-app-id \
+  --value "<apim-gateway-app-client-id>"
+
+az apim nv create -g $RG --service-name $APIM \
+  --named-value-id apim-gateway-client-secret \
+  --display-name apim-gateway-client-secret \
+  --value "<apim-gateway-client-secret>" \
+  --secret true
+
+az apim nv create -g $RG --service-name $APIM \
+  --named-value-id mcp-api-app-id \
+  --display-name mcp-api-app-id \
+  --value "<mcp-api-app-client-id>"
+```
+
+--------------------------------
+
+### Add WWW-Authenticate Header to MCP API Error Handling in XML
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/enterprise-managed-auth/entra.mdx
+
+Injects the discovery hint into 401 responses so MCP clients know where to find the PRM document. This block should be placed within the <on-error> section of the API policy.
+
+```xml
+<on-error>
+  <base />
+  <choose>
+    <when condition="@(context.Response.StatusCode == 401)">
+      <set-header name="WWW-Authenticate" exists-action="override">
+        <value>Bearer resource_metadata="https://<your-apim-host>/.well-known/oauth-protected-resource"</value>
+      </set-header>
+    </when>
+  </choose>
+</on-error>
+```
+
+--------------------------------
+
+### Monitor Health Status
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/deployment/kubernetes.mdx
+
+Queries the health endpoint to verify license status, connectivity, and system uptime.
+
+```bash
+kubectl exec -n context7 context7-0 -- \
+  wget -qO- http://localhost:3000/api/health
+```
+
+--------------------------------
+
+### Define Context7 MCP client connection in TypeScript
+
+Source: https://github.com/upstash/context7/blob/master/docs/integrations/eve.mdx
+
+Configures the Context7 MCP connection in agent/connections/context7.ts with optional API key auth and allowed tools.
+
+```typescript
+import { defineMcpClientConnection } from "eve/connections";
+
+const apiKey = process.env.CONTEXT7_API_KEY;
+
+export default defineMcpClientConnection({
+  url: "https://mcp.context7.com/mcp",
+  description:
+    "Context7: up-to-date, version-specific library documentation and code examples.",
+  ...(apiKey
+    ? {
+        auth: {
+          getToken: async () => ({ token: apiKey }),
+        },
+      }
+    : {}),
+  tools: {
+    allow: ["resolve-library-id", "query-docs"],
+  },
+});
+```
+
+--------------------------------
+
+### Configure Shared Environment Variables with Kubernetes Secret
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/deployment/scaling.mdx
+
+Create a Kubernetes Secret containing shared configuration values such as the license key, database URL, and encryption key.
+
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: context7-env
+  namespace: context7
+type: Opaque
+stringData:
+  LICENSE_KEY: "ctx7sk-..."
+  DATABASE_URL: "postgres://user:pass@host:5432/context7"
+  ENCRYPTION_KEY: "<64 hex, openssl rand -hex 32>"
+```
+
+--------------------------------
+
+### Check Service Health
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/deployment/docker.mdx
+
+Verify the status of the deployment via the health API endpoint.
+
+```bash
+curl http://localhost:3000/api/health
+```
+
+```json
+{
+  "status": "healthy",
+  "version": "1.0.0",
+  "setup": "complete",
+  "license": "configured",
+  "licenseInfo": {
+    "valid": true,
+    "teamSize": 10,
+    "expiresAt": "2026-06-01T00:00:00.000Z"
+  },
+  "repos_parsed": 5,
+  "uptime": 3600,
+  "connectivity": {
+    "llm": "configured",
+    "llm_provider": "openai",
+    "embedding": "configured",
+    "embedding_provider": "openai",
+    "github": "configured",
+    "gitlab": "not configured"
+  }
+}
+```
+
+--------------------------------
+
+### Retrieve APIM Gateway URL
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/enterprise-managed-auth/entra.mdx
+
+Queries the deployed APIM instance to extract the gateway URL. This URL is required for subsequent configuration steps in the Context7 dashboard.
+
+```bash
+APIM_HOST=$(az apim show -g $RG -n $APIM --query gatewayUrl -o tsv)
+echo $APIM_HOST  # https://<apim-name>.azure-api.net
+```
+
+--------------------------------
+
+### Authenticate API requests with Bearer token
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/api/authentication.mdx
+
+Include the API key in the Authorization header for server-to-server and MCP access. Keys inherit the role of the user who created them.
+
+```bash
+Authorization: Bearer ctx7op-xxxxxxxx_xxxxxxxxxxxxxxxx
+```
+
+--------------------------------
+
+### Specify Library Versions in TypeScript
+
+Source: https://github.com/upstash/context7/blob/master/docs/agentic-tools/ai-sdk/tools/query-docs.mdx
+
+Include version specifiers in library IDs to target specific releases. The model uses these IDs to fetch the relevant documentation.
+
+```typescript
+// Latest version
+"/vercel/next.js";
+
+// Specific version
+"/vercel/next.js/v14.3.0-canary.87";
+```
+
+--------------------------------
+
+### Augment Code MCP Command
+
+Source: https://github.com/upstash/context7/blob/master/packages/mcp/README.md
+
+Command to add the Context7 MCP server via the Augment Code UI.
+
+```text
+npx -y @upstash/context7-mcp@latest
+```
+
+--------------------------------
+
+### resolve-library-id
+
+Source: https://github.com/upstash/context7/blob/master/README.md
+
+Resolves a general library name into a Context7-compatible library ID based on a query.
+
+```APIDOC
+## resolve-library-id
+
+### Description
+Resolves a general library name into a Context7-compatible library ID.
+
+### Parameters
+- **query** (string) - Required - The user's question or task used to rank results by relevance.
+- **libraryName** (string) - Required - The name of the library to search for.
+```
+
+--------------------------------
+
+### resolve-library-id
+
+Source: https://github.com/upstash/context7/blob/master/packages/mcp/README.md
+
+Resolves a general library name into a Context7-compatible library ID.
+
+```APIDOC
+## resolve-library-id
+
+### Description
+Resolves a general library name into a Context7-compatible library ID.
+
+### Parameters
+- **libraryName** (string) - Required - The name of the library to search for
+```
+
+--------------------------------
+
+### Configure remote Context7 MCP server in Roo Code
+
+Source: https://github.com/upstash/context7/blob/master/docs/resources/all-clients.mdx
+
+Specifies a streamable-http MCP connection in Roo Code's configuration file. Supply your Context7 API key in the Authorization header.
+
+```json
+{
+  "mcpServers": {
+    "context7": {
+      "type": "streamable-http",
+      "url": "https://mcp.context7.com/mcp",
+      "headers": {
+        "Authorization": "Bearer YOUR_API_KEY"
+      }
+    }
+  }
+}
+```
+
+--------------------------------
+
+### Mount SSH keys in Kubernetes pod specification
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/integrations/other-git.mdx
+
+Mounts the SSH secret volume into `/etc/git-ssh` with read-only permissions and configures `GIT_SSH_COMMAND`. Set defaultMode to 0400 so the private key has valid file permissions.
+
+```yaml
+spec:
+  containers:
+    - name: context7
+      env:
+        - name: GIT_SSH_COMMAND
+          value: "ssh -i /etc/git-ssh/id_ed25519 -o UserKnownHostsFile=/etc/git-ssh/known_hosts"
+      volumeMounts:
+        - name: git-ssh
+          mountPath: /etc/git-ssh
+          readOnly: true
+  volumes:
+    - name: git-ssh
+      secret:
+        secretName: context7-git-ssh
+        defaultMode: 0400
+```
+
+--------------------------------
+
+### Specify Gerrit repository clone URL
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/integrations/gerrit.mdx
+
+Clone URL formats supported when adding a Gerrit repository over HTTPS or SSH.
+
+```text
+https://gerrit.example.com/a/platform/sdk
+```
+
+```text
+ssh://context7@gerrit.example.com:29418/platform/sdk
+```
+
+--------------------------------
+
+### Handle Errors During Context Retrieval (TypeScript)
+
+Source: https://github.com/upstash/context7/blob/master/docs/sdks/ts/commands/get-context.mdx
+
+This snippet demonstrates how to catch and handle `Context7Error` exceptions that may occur during context retrieval, such as when an invalid `libraryId` is provided.
+
+```typescript
+import { Context7, Context7Error } from "@upstash/context7-sdk";
+
+const client = new Context7();
+
+try {
+  const context = await client.getContext(
+    "How to get started?",
+    "/invalid/library"
+  );
+} catch (error) {
+  if (error instanceof Context7Error) {
+    console.error("API Error:", error.message);
+  } else {
+    throw error;
+  }
+}
+```
+
+--------------------------------
+
+### Update MCP Client URL to OAuth Endpoint
+
+Source: https://github.com/upstash/context7/blob/master/docs/howto/oauth.mdx
+
+Modify the client configuration to point to the OAuth-enabled endpoint for Context7 MCP server.
+
+```diff
+- "url": "https://mcp.context7.com/mcp"
++ "url": "https://mcp.context7.com/mcp/oauth"
+```
+
+--------------------------------
+
+### Configure OAuth Authorize Redirect Policy in XML
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/enterprise-managed-auth/entra.mdx
+
+Performs a 302 redirect to Entra's authorization endpoint to preserve browser cookies and relative URLs. Appends the original query string to the redirect location.
+
+```xml
+<policies>
+  <inbound>
+    <return-response>
+      <set-status code="302" reason="Found" />
+      <set-header name="Location" exists-action="override">
+        <value>@($"https://login.microsoftonline.com/<your-tenant-id>/oauth2/v2.0/authorize{context.Request.OriginalUrl.QueryString}")</value>
+      </set-header>
+    </return-response>
+  </inbound>
+</policies>
+```
+
+--------------------------------
+
+### Add Chat Widget to Docusaurus Configuration
+
+Source: https://github.com/upstash/context7/blob/master/docs/howto/chat-widget.mdx
+
+Include the widget script in the scripts array of your docusaurus.config.js file. Set async to true to ensure the widget loads without blocking page rendering.
+
+```js
+export default {
+  // ...other config
+  scripts: [
+    {
+      src: "https://context7.com/widget.js",
+      "data-library": "/owner/repo",
+      async: true,
+    },
+  ],
+};
+```
+
+--------------------------------
+
+### Refresh Registry Credentials
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/deployment/kubernetes.mdx
+
+Updates the Docker registry secret using a license key to obtain a new access token.
+
+```bash
+LICENSE_KEY="<your-license-key>"
+
+TOKEN=$(curl -s -H "Authorization: Bearer $LICENSE_KEY" \
+  https://context7.com/api/v1/license/registry-token | jq -r '.token')
+
+kubectl create secret docker-registry context7-registry \
+  --namespace context7 \
+  --docker-server=ghcr.io \
+  --docker-username=x-access-token \
+  --docker-password="$TOKEN" \
+  --dry-run=client -o yaml | kubectl apply -f -
+```
+
+--------------------------------
+
+### Kilo Code MCP Configuration
+
+Source: https://github.com/upstash/context7/blob/master/packages/mcp/README.md
+
+Project-level configuration for Kilo Code using a streamable-http type.
+
+```json
+{
+  "mcpServers": {
+    "context7": {
+      "type": "streamable-http",
+      "url": "https://mcp.context7.com/mcp",
+      "headers": {
+        "Authorization": "Bearer YOUR_API_KEY"
+      },
+      "alwaysAllow": [],
+      "disabled": false
+    }
+  }
+}
+```
+
+--------------------------------
+
+### Tool Input Schema: queryDocs
+
+Source: https://github.com/upstash/context7/blob/master/docs/agentic-tools/ai-sdk/tools/query-docs.mdx
+
+The schema defining the arguments the AI model provides when invoking the queryDocs tool during a generation step.
+
+```APIDOC
+## Tool Input: queryDocs
+
+### Description
+Parameters passed by the AI model to the queryDocs tool to retrieve documentation.
+
+### Parameters
+#### Input Fields
+- **libraryId** (string) - Required - Context7-compatible library ID (e.g., `/reactjs/react.dev`, `/vercel/next.js`).
+- **query** (string) - Required - The question or task scoped to a single concept. Should be specific and include relevant details.
+
+### Response
+#### Success Response
+- **content** (string) - The documentation content as plain text, formatted for AI consumption.
+
+#### Error Response
+- **message** (string) - A string indicating no documentation was found or that an invalid library ID was provided.
+```
+
+--------------------------------
+
+### Embed Chat Widget Script
+
+Source: https://github.com/upstash/context7/blob/master/docs/howto/chat-widget.mdx
+
+Include this script in your HTML root layout to load the widget asynchronously across your site.
+
+```html
+<script
+  src="https://context7.com/widget.js"
+  data-library="/owner/repo"
+></script>
+```
+
+--------------------------------
+
+### Add Context7 Remote MCP Server in Claude Code
+
+Source: https://github.com/upstash/context7/blob/master/docs/resources/all-clients.mdx
+
+Connects Claude Code to the remote hosted Context7 MCP server over HTTP. Pass your Context7 API key in the Authorization header.
+
+```sh
+claude mcp add --scope user --header "Authorization: Bearer YOUR_API_KEY" --transport http context7 https://mcp.context7.com/mcp
+```
+
+--------------------------------
+
+### Create Kubernetes Secret for SSH deploy keys
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/integrations/other-git.mdx
+
+Defines a Kubernetes Secret storing the OpenSSH private deploy key and host known_hosts entries. Mount this secret into the Context7 container to avoid storing keys in the UI database.
+
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: context7-git-ssh
+type: Opaque
+stringData:
+  id_ed25519: |
+    -----BEGIN OPENSSH PRIVATE KEY-----
+    ...
+    -----END OPENSSH PRIVATE KEY-----
+  known_hosts: |
+    [gerrit.your-company.com]:29418 ssh-ed25519 AAAA...
+```
+
+--------------------------------
+
+### Roo Code MCP Configuration
+
+Source: https://github.com/upstash/context7/blob/master/packages/mcp/README.md
+
+Configuration for remote and local server connections in Roo Code.
+
+```json
+{
+  "mcpServers": {
+    "context7": {
+      "type": "streamable-http",
+      "url": "https://mcp.context7.com/mcp",
+      "headers": {
+        "Authorization": "Bearer YOUR_API_KEY"
+      }
+    }
+  }
+}
+```
+
+```json
+{
+  "mcpServers": {
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp", "--api-key", "YOUR_API_KEY"]
+    }
+  }
+}
+```
+
+--------------------------------
+
+### Customize Chat Widget Attributes in HTML
+
+Source: https://github.com/upstash/context7/blob/master/docs/howto/chat-widget.mdx
+
+Modify the widget's appearance and behavior by adding data attributes to the script tag. The data-library attribute is required for all configurations.
+
+```html
+<script
+  src="https://context7.com/widget.js"
+  data-library="/vercel/next.js"
+  data-color="#0070F3"
+  data-position="bottom-left"
+></script>
+```
+
+```html
+<script
+  src="https://context7.com/widget.js"
+  data-library="/vercel/next.js"
+  data-placeholder="Ask me anything about Next.js..."
+></script>
+```
+
+```html
+<script
+  src="https://context7.com/widget.js"
+  data-library="/vercel/next.js"
+  data-welcome-message="Hello! I'm here to help you with the Next.js documentation."
+></script>
+```
+
+--------------------------------
+
+### Update Endpoint to OAuth in Client Configuration
+
+Source: https://github.com/upstash/context7/blob/master/docs/resources/all-clients.mdx
+
+Switch the MCP server endpoint URL from /mcp to /mcp/oauth for clients supporting OAuth 2.0 authentication. OAuth is only available for remote HTTP connections.
+
+```diff
+- "url": "https://mcp.context7.com/mcp"
++ "url": "https://mcp.context7.com/mcp/oauth"
+```
+
+--------------------------------
+
+### GitHub Actions Step to Refresh a Specific Context7 Branch
+
+Source: https://github.com/upstash/context7/blob/master/docs/integrations/github-actions.mdx
+
+Use this workflow step to refresh a non-default branch of your Context7 library. The branch value must match an existing branch in Context7.
+
+```yaml
+- name: Trigger Context7 Refresh
+  run: |
+    curl -s -X POST https://context7.com/api/v1/refresh \
+      -H "Content-Type: application/json" \
+      -H "Authorization: Bearer ${{ secrets.CONTEXT7_API_KEY }}" \
+      -d '{"libraryName": "/your-org/your-repo", "branch": "v2"}'
+```
+
+--------------------------------
+
+### Define Egress NetworkPolicy
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/deployment/kubernetes.mdx
+
+Configures a Kubernetes NetworkPolicy to manage outbound traffic for the Context7 application.
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: context7-egress
+  namespace: context7
+spec:
+  podSelector:
+    matchLabels:
+      app: context7
+  policyTypes:
+    - Egress
+  egress:
+    - {} # Allow all egress (simplest)
+```
+
+--------------------------------
+
+### Azure API Management OBO Policy XML
+
+Source: https://github.com/upstash/context7/blob/master/docs/enterprise/enterprise-managed-auth/entra.mdx
+
+This policy implements the On-Behalf-Of flow by validating inbound tokens and exchanging them for backend-specific tokens. It includes workarounds for APIM-specific constraints like variable substitution and XML attribute escaping.
+
+```xml
+<policies>
+  <inbound>
+    <base />
+
+    <validate-azure-ad-token tenant-id="{{entra-tenant-id}}"
+        header-name="Authorization"
+        failed-validation-httpcode="401"
+        failed-validation-error-message="Unauthorized.">
+      <audiences>
+        <audience>{{apim-gateway-app-id}}</audience>
+      </audiences>
+      <required-claims>
+        <claim name="scp" match="any">
+          <value>Mcp.Gateway.Access</value>
+        </claim>
+      </required-claims>
+    </validate-azure-ad-token>
+
+    <set-variable name="entraTenantId" value="{{entra-tenant-id}}" />
+    <set-variable name="gatewayAppId" value="{{apim-gateway-app-id}}" />
+    <set-variable name="gatewaySecret" value="{{apim-gateway-client-secret}}" />
+    <set-variable name="mcpApiAppId" value="{{mcp-api-app-id}}" />
+
+    <set-variable name="userOid" value="@{
+      var auth = context.Request.Headers.GetValueOrDefault(&quot;Authorization&quot;, &quot;&quot;);
+      var token = auth.StartsWith(&quot;Bearer &quot;) ? auth.Substring(7) : auth;
+      return (string)token.AsJwt().Claims.GetValueOrDefault(&quot;oid&quot;, &quot;&quot;);
+    }" />
+
+    <cache-lookup-value
+        key="@(&quot;obo-mcp-&quot; + (string)context.Variables[&quot;userOid&quot;])"
+        variable-name="oboToken" />
+
+    <choose>
+      <when condition="@(!context.Variables.ContainsKey(&quot;oboToken&quot;))">
+        <send-request mode="new" response-variable-name="oboResponse" timeout="20" ignore-error="false">
+          <set-url>@("https://login.microsoftonline.com/" + (string)context.Variables["entraTenantId"] + "/oauth2/v2.0/token")</set-url>
+          <set-method>POST</set-method>
+          <set-header name="Content-Type" exists-action="override">
+            <value>application/x-www-form-urlencoded</value>
+          </set-header>
+          <set-body>@{
+            var auth = context.Request.Headers.GetValueOrDefault("Authorization", "");
+            var inbound = auth.StartsWith("Bearer ") ? auth.Substring(7) : auth;
+            var pairs = new System.Collections.Generic.Dictionary&lt;string, string&gt; {
+              { "grant_type", "urn:ietf:params:oauth:grant-type:jwt-bearer" },
+              { "client_id", (string)context.Variables["gatewayAppId"] },
+              { "client_secret", (string)context.Variables["gatewaySecret"] },
+              { "assertion", inbound },
+              { "scope", "api://" + (string)context.Variables["mcpApiAppId"] + "/.default" },
+              { "requested_token_use", "on_behalf_of" }
+            };
+            var parts = new System.Collections.Generic.List&lt;string&gt;();
+            foreach (var kv in pairs) {
+              parts.Add(System.Net.WebUtility.UrlEncode(kv.Key) + "=" + System.Net.WebUtility.UrlEncode(kv.Value));
+            }
+            return string.Join("&amp;", parts);
+          }</set-body>
+        </send-request>
+
+        <set-variable name="oboToken" value="@{
+          var resp = ((IResponse)context.Variables[&quot;oboResponse&quot;]).Body.As&lt;JObject&gt;();
+          return (string)resp[&quot;access_token&quot;];
+        }" />
+
+        <cache-store-value
+            key="@(&quot;obo-mcp-&quot; + (string)context.Variables[&quot;userOid&quot;])"
+            value="@((string)context.Variables[&quot;oboToken&quot;])"
+            duration="3000" />
+      </when>
+    </choose>
+
+    <set-header name="Authorization" exists-action="override">
+      <value>@(&quot;Bearer &quot; + (string)context.Variables[&quot;oboToken&quot;])</value>
+    </set-header>
+    <rewrite-uri template="/mcp/oauth" />
+  </inbound>
+  <backend>
+    <base />
+  </backend>
+  <outbound>
+    <base />
+  </outbound>
+  <on-error>
+    <base />
+  </on-error>
+</policies>
+```
+
+--------------------------------
+
+### Standard Error Response Format
+
+Source: https://github.com/upstash/context7/blob/master/docs/api-guide.mdx
+
+All API errors return this JSON structure containing an error code and a descriptive message.
+
+```json
+{
+  "error": "library_not_found",
+  "message": "Library \"/owner/repo\" not found. Please check the library ID or your access permissions."
+}
+```
+
+--------------------------------
+
+### Disable Context7 Telemetry
+
+Source: https://github.com/upstash/context7/blob/master/packages/cli/README.md
+
+Disable anonymous usage data collection by setting the `CTX7_TELEMETRY_DISABLED` environment variable for a single command or in your shell profile.
+
+```bash
+CTX7_TELEMETRY_DISABLED=1 ctx7 docs /facebook/react "useEffect examples"
+```
+
+```bash
+export CTX7_TELEMETRY_DISABLED=1
+```
+
+--------------------------------
+
+### Disable telemetry reporting in CLI
+
+Source: https://github.com/upstash/context7/blob/master/docs/clients/cli.mdx
+
+Set CTX7_TELEMETRY_DISABLED to 1 to opt out of anonymous telemetry for a single command or across your shell profile.
+
+```bash
+# For a single command
+CTX7_TELEMETRY_DISABLED=1 ctx7 docs /facebook/react "useEffect examples"
+
+# Permanently — add to ~/.bashrc or ~/.zshrc
+export CTX7_TELEMETRY_DISABLED=1
+```
+
+=== COMPLETE CONTENT === This response contains all available snippets from this library. No additional content exists. Do not make further requests.

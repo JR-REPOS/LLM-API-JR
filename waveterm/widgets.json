@@ -1,0 +1,16 @@
+{
+  "context7": {
+    "icon": "book",
+    "label": "context7",
+    "color": "#7aa2b8",
+    "description": "Chat live library docs via Context7",
+    "display:order": -1,
+    "blockdef": {
+      "meta": {
+        "view": "web",
+        "url": "REPLACE_WITH_APP_URL",
+        "pinnedurl": "REPLACE_WITH_APP_URL"
+      }
+    }
+  }
+}

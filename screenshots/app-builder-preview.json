@@ -1,0 +1,38 @@
+{
+  "url": "http://127.0.0.1:8080/",
+  "viewports": {
+    "desktop": {
+      "width": 1280,
+      "height": 800,
+      "status": 200,
+      "title": "Context7",
+      "hasCanvas": false,
+      "bodyTextLen": 268,
+      "bodyTextHash": "fb7955236aea26a72ef04397c4415dc23ecb14a398fdb8432935db9323eb06bc",
+      "bodyTextPrefix": "W workspace / Context7 Context7 sidebar widget Ask current docs ",
+      "horizontalOverflow": false,
+      "consoleErrors": [
+        "A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\n%s%s https://react.dev/link/hydration-mismatch \n\n  ...\n    <SafeFragment fallback={null}>\n      <CatchBoundary getResetKey={function getResetKey} errorComponent={function AppErrorComponent} ...>\n        <SafeFragment fallback={function fallback}>\n          <MatchInnerImpl match={{id:\"//\",ssr:true, ...}}>\n            <Lazy>\n              <Home>\n                <Context7Widget>\n                  <WaveShell>\n                    <div className=\"flex h-dvh...\">\n                      <aside>\n                      <div className=\"flex min-h...\">\n                        <header>\n                        <div className=\"min-h-0 fl...\">\n                          <div className=\"flex h-ful...\">\n                            <section className=\"mx-auto fl...\">\n                              <div>\n                              <div className=\"relative b...\">\n                                <div className=\"flex items...\">\n                                  <Search>\n                                  <input\n                                    value=\"\"\n                                    onChange={function onChange}\n                                    onFocus={function onFocus}\n                                    placeholder=\"Pin a library — react, waveterm…\"\n                                    className=\"h-9 w-full bg-transparent text-sm text-fg outline-none placeholder:text...\"\n-                                   style={{caret-color:\"transparent\"}}\n                                  >\n                              <div>\n                              <form className=\"shrink-0 b...\" onSubmit={function onSubmit}>\n                                <div className=\"flex items...\">\n                                  <textarea\n                                    ref={{current:null}}\n                                    rows={1}\n                                    value=\"\"\n                                    onChange={function onChange}\n                                    onKeyDown={function onKeyDown}\n                                    placeholder=\"Ask any library…\"\n                                    className=\"max-h-32 min-h-10 flex-1 resize-none bg-transparent px-2 py-2 text-sm t...\"\n-                                   style={{caret-color:\"transparent\"}}\n                                  >\n                                  ...\n"
+      ],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-preview.png"
+    },
+    "mobile": {
+      "width": 390,
+      "height": 844,
+      "status": 200,
+      "title": "Context7",
+      "hasCanvas": false,
+      "bodyTextLen": 266,
+      "bodyTextHash": "b4acdb6c68fda52d5bad430aaacb600ce2dfa1c553fcd5f1eb0080156636f45e",
+      "bodyTextPrefix": "workspace / Context7 Context7 sidebar widget Ask current docs Pi",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-preview-mobile.png"
+    }
+  },
+  "brandWarnings": [],
+  "authWarnings": [],
+  "verdictFile": "/workspace/screenshots/app-builder-preview.json"
+}
