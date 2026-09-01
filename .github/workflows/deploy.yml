@@ -35,6 +35,14 @@ jobs:
       - name: Build app
         run: npm run build
 
+      - name: Verify build output
+        run: |
+          if [ ! -d "./dist" ]; then
+            echo "Error: dist directory was not created after build"
+            ls -la
+            exit 1
+          fi
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
